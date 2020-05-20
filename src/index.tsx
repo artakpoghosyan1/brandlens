@@ -4,7 +4,9 @@ import "./view/style/main.scss";
 
 const App = () => {
     const x=1;
-    console.log(x)
+    console.log(x); function f() {
+        return null
+    }
     return <div>
         <span>
             asas
