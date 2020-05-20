@@ -3,7 +3,13 @@ import ReactDOM from 'react-dom';
 import "./view/style/main.scss";
 
 const App = () => {
-    return <div>dddd</div>;
+    const x=1;
+    console.log(x)
+    return <div>
+        <span>
+            asas
+            </span>
+    </div>;
 };
 
 ReactDOM.render(<App />, document.getElementById('root'));
