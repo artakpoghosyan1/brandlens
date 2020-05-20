@@ -1,0 +1,11 @@
+.idea/
+/dist/
+/es/
+typings/
+coverage/
+node_modules/
+npm-debug.log
+yarn-error.log
+*.iml
+.DS_STORE
+junit.xml
