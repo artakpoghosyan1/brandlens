@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --mode development --open",
+    "start": "webpack-dev-server --open",
     "dev": "webpack --mode development",
     "build": "webpack --mode production",
-    "format": "prettier --write \"src/**/*.js\"",
+    "format": "prettier --write \"src/**/*.tsx\"",
     "eslint-fix": "eslint --fix \"src/**/*.js\""
   },
   "repository": {
@@ -21,7 +21,10 @@
   },
   "homepage": "https://github.com/artakpoghosyan1/brandlens#readme",
   "dependencies": {
+    "@babylonjs/core": "^4.1.0",
+    "@babylonjs/loaders": "^4.1.0",
     "react": "^16.13.1",
+    "react-babylonjs": "^2.2.0",
     "react-dom": "^16.13.1"
   },
   "devDependencies": {

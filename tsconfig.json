@@ -7,7 +7,7 @@
     "module": "es6",
     "moduleResolution": "node",
     "noImplicitAny": false,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
@@ -15,13 +15,6 @@
   },
   "compileOnSave": false,
   "buildOnSave": false,
-  "include": [
-    "./src/**/*.ts",
-    "./src/**/*.tsx",
-    "./src/**/*.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["./src/**/*.ts", "./src/**/*.tsx", "./src/**/*.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }
