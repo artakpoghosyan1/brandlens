@@ -1,9 +1,15 @@
 import * as React from 'react'
 import { css } from 'emotion'
+import { connect } from 'react-redux'
+import { IState } from '../../data/ISstate'
+import { changeCurrentSceneAction } from '../../data/actionCreators'
+import { currentSceneSelector } from '../../data/selectors/currentSceneSelector'
 
 interface IVideoComponentProps {
     videoURL: string
-    isRecordingComplete: boolean
+    changeCurrentScene: (currentScene: string) => void
+    currentScene: string
+    setRetry: (retry: boolean) => void
 }
 
 const videoWrapperClass = css`
@@ -18,27 +24,54 @@ const videoWrapperClass = css`
     transition: 0.7s all;
 `
 
-export const VideoComponent: React.FunctionComponent<IVideoComponentProps> = React.memo(
+const Video: React.FunctionComponent<IVideoComponentProps> = React.memo(
     (props) => {
-        return (
-            <>
-                {props.isRecordingComplete ? (
-                    <div id="video-wrapper" className={videoWrapperClass}>
-                        <video
-                            src={props.videoURL}
-                            id="video"
-                            className="video"
-                            autoPlay
-                            loop
-                        />
+        const handleOnrNextStepClick = () => {
+            let step = +props.currentScene.split('_')[1]
+            props.changeCurrentScene(`step_${++step}`)
+        }
 
-                        <div className="video-btns">
-                            <button id="retry" className="button retry" />
-                            <button id="ok" className="button ok" />
-                        </div>
-                    </div>
-                ) : null}
-            </>
+        const handleOnrRetryClick = () => {
+            props.setRetry(true)
+        }
+
+        return (
+            <div id="video-wrapper" className={videoWrapperClass}>
+                <video
+                    src={props.videoURL}
+                    id="video"
+                    className="video"
+                    autoPlay
+                    loop
+                />
+
+                <div className="video-btns">
+                    <button
+                        id="retry"
+                        className="button retry"
+                        onClick={handleOnrRetryClick}
+                    />
+                    <button
+                        id="ok"
+                        className="button ok"
+                        onClick={handleOnrNextStepClick}
+                    />
+                </div>
+            </div>
         )
     }
 )
+
+const mapDispatchToProps = (dispatch) => ({
+    changeCurrentScene: (currentScene) =>
+        dispatch(changeCurrentSceneAction(currentScene)),
+})
+
+const mapStateToProps = (state: IState) => ({
+    currentScene: currentSceneSelector(state),
+})
+
+export const VideoComponent = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Video)

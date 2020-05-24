@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { createScene } from '../../scenes/webCam'
 import { Engine } from '@babylonjs/core/Engines/engine'
 import { VideoRecorder } from '@babylonjs/core/Misc'
 import { StartRecordingButtonComponent } from './StartRecordingButtonComponent'
@@ -8,6 +7,14 @@ import { css } from 'emotion'
 import { VideoComponent } from './VideoComponent'
 import { getLocalStorage } from '../shared/utilities/getLocalStorage'
 import { Scene } from '@babylonjs/core'
+import { scene1 } from '../../scenes/scene1'
+import { currentSceneSelector } from '../../data/selectors/currentSceneSelector'
+import { connect } from 'react-redux'
+import { IState } from '../../data/ISstate'
+
+interface IHomeComponentProps {
+    currentScene: string
+}
 
 const homePageWrapperClass = css`
     position: relative;
@@ -21,88 +28,118 @@ const homePageWrapperClass = css`
 `
 
 const storage = getLocalStorage()
+const scene1Collection = scene1()
 
-export const HomeComponent: React.FunctionComponent = React.memo(() => {
-    const canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef()
-    const [videoRecorder, setVideoRecorder] = React.useState<VideoRecorder>()
-    const [isRecordingSupported, setIsRecordingSupported] = React.useState<
-        boolean
-    >(false)
-    const [isRecording, setIsRecording] = React.useState<boolean>(false)
-    const [isRecordingComplete, setIsRecordingComplete] = React.useState<
-        boolean
-    >(false)
-    const [recordedVideoURL, setRecordedVideoURL] = React.useState<string>('')
-    const [scene, setScene] = React.useState<Scene | null>(null)
+const Home: React.FunctionComponent<IHomeComponentProps> = React.memo(
+    (props) => {
+        const canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef()
 
-    React.useEffect(() => {
-        const engine = new Engine(canvasRef.current, true, {
-            preserveDrawingBuffer: true,
-            stencil: true,
-        })
-
-        setIsRecordingSupported(VideoRecorder.IsSupported(engine))
-        setVideoRecorder(new VideoRecorder(engine))
-
-        const scene = createScene(
-            engine,
-            canvasRef.current!.offsetWidth,
-            canvasRef.current!.offsetHeight
+        const [videoRecorder, setVideoRecorder] = React.useState<
+            VideoRecorder
+        >()
+        const [isRecordingSupported, setIsRecordingSupported] = React.useState<
+            boolean
+        >(false)
+        const [isRecording, setIsRecording] = React.useState<boolean>(false)
+        const [isRecordingComplete, setIsRecordingComplete] = React.useState<
+            boolean
+        >(false)
+        const [recordedVideoURL, setRecordedVideoURL] = React.useState<string>(
+            ''
         )
-        setScene(scene)
+        const [currentScene, setCurrentScene] = React.useState<Scene | null>(
+            null
+        )
+        const [retry, setRetry] = React.useState<boolean>(false)
 
-        engine.runRenderLoop(function () {
-            if (scene) {
-                scene.render()
-            }
-        })
-    }, [])
+        React.useEffect(() => {
+            setIsRecordingComplete(false)
 
-    const handleOnStartClick = () => {
-        if (isRecordingSupported) {
-            setIsRecording(true)
+            const engine = new Engine(canvasRef.current, true, {
+                preserveDrawingBuffer: true,
+                stencil: true,
+            })
 
-            videoRecorder!.startRecording(null).then(function (blob) {
-                const newBlob = new Blob([blob])
-                const url = URL.createObjectURL(newBlob)
-                setRecordedVideoURL(url)
+            const scene = scene1Collection[props.currentScene](
+                engine,
+                canvasRef.current!.offsetWidth,
+                canvasRef.current!.offsetHeight
+            )
 
-                const videoCollection = storage.getItem('videoCollection')
-
-                if (videoCollection) {
-                    videoCollection.push(url)
-                    storage.setItem('videoCollection', videoCollection)
-                } else {
-                    storage.setItem('videoCollection', [url])
+            engine.runRenderLoop(function () {
+                if (scene) {
+                    scene.render()
                 }
             })
 
-            setTimeout(() => {
-                videoRecorder!.stopRecording()
-                setIsRecording(false)
-                setIsRecordingComplete(true)
-                scene!.dispose()
-            }, 2000)
+            setIsRecordingSupported(VideoRecorder.IsSupported(engine))
+            setVideoRecorder(new VideoRecorder(engine))
+            setCurrentScene(scene)
+        }, [props.currentScene, retry])
+
+        const saveVideoInLocalStorage = (url) => {
+            const videoCollection = storage.getItem('videoCollection')
+
+            if (videoCollection) {
+                videoCollection.push(url)
+                storage.setItem('videoCollection', videoCollection)
+            } else {
+                storage.setItem('videoCollection', [url])
+            }
         }
+
+        const handleOnStartClick = () => {
+            setRetry(false)
+
+            if (isRecordingSupported) {
+                setIsRecording(true)
+
+                videoRecorder!.startRecording(null).then(function (blob) {
+                    const newBlob = new Blob([blob])
+                    const url = URL.createObjectURL(newBlob)
+                    setRecordedVideoURL(url)
+
+                    saveVideoInLocalStorage(url)
+                })
+
+                setTimeout(() => {
+                    videoRecorder!.stopRecording()
+                    setIsRecording(false)
+                    setIsRecordingComplete(true)
+                    currentScene!.dispose()
+                }, 2000)
+            }
+        }
+
+        return (
+            <div className={homePageWrapperClass}>
+                <RecordingProgressBarComponent isRecording={isRecording} />
+
+                <div
+                    className="addthis_inline_share_toolbox share"
+                    id="share"
+                />
+
+                <canvas id="renderCanvas" ref={canvasRef} />
+
+                <StartRecordingButtonComponent
+                    onClick={handleOnStartClick}
+                    isRecording={isRecording}
+                />
+
+                {isRecordingComplete && !retry && (
+                    <VideoComponent
+                        videoURL={recordedVideoURL}
+                        setRetry={setRetry}
+                    />
+                )}
+            </div>
+        )
     }
+)
 
-    return (
-        <div className={homePageWrapperClass}>
-            <RecordingProgressBarComponent isRecording={isRecording} />
-
-            <div className="addthis_inline_share_toolbox share" id="share" />
-
-            <canvas id="renderCanvas" ref={canvasRef} />
-
-            <StartRecordingButtonComponent
-                onClick={handleOnStartClick}
-                isRecording={isRecording}
-            />
-
-            <VideoComponent
-                videoURL={recordedVideoURL}
-                isRecordingComplete={isRecordingComplete}
-            />
-        </div>
-    )
+const mapStateToProps = (state: IState) => ({
+    currentScene: currentSceneSelector(state),
 })
+
+export const HomeComponent = connect(mapStateToProps, null)(Home)

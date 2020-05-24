@@ -1,8 +1,15 @@
-import { TOGGLE_IS_ALLOWED_CAMERA } from './actions'
+import * as types from './actions'
 
-export function toggleIsAllowedCameraAction(isAllowedCamera) {
+export function toggleIsAllowedCameraAction(isAllowedCamera: boolean) {
     return {
-        type: TOGGLE_IS_ALLOWED_CAMERA,
+        type: types.TOGGLE_IS_ALLOWED_CAMERA,
         isAllowedCamera,
+    }
+}
+
+export function changeCurrentSceneAction(currentScene: string) {
+    return {
+        type: types.CHANGE_CURRENT_SCENE,
+        currentScene,
     }
 }

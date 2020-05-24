@@ -16,7 +16,7 @@ const startBtnClass = css`
     left: 50%;
     bottom: 25px;
     transform: translateX(-30px);
-    z-index: 100;
+    z-index: 10;
     cursor: pointer;
 `
 
@@ -28,6 +28,7 @@ export const StartRecordingButtonComponent: React.FunctionComponent<IStartRecord
     (props) => {
         return (
             <button
+                disabled={props.isRecording}
                 className={`${startBtnClass} ${
                     props.isRecording ? startBtnRecordingClass : ''
                 }`}
