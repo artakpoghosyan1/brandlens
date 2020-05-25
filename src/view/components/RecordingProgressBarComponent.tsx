@@ -30,20 +30,10 @@ const showClass = css`
     opacity: 1;
 `
 
-export const RecordingProgressBarComponent: React.FunctionComponent<IRecordingProgressBarComponentProps> = React.memo(
-    (props) => {
-        return (
-            <div
-                className={`${progressBarClass} ${
-                    props.isRecording ? showClass : ''
-                }`}
-            >
-                <div
-                    className={`${progressBarInnerClass} ${
-                        props.isRecording ? fillClass : ''
-                    }`}
-                />
-            </div>
-        )
-    }
-)
+export const RecordingProgressBarComponent: React.FunctionComponent<IRecordingProgressBarComponentProps> = React.memo((props) => {
+    return (
+        <div className={`${progressBarClass} ${props.isRecording ? showClass : ''}`}>
+            <div className={`${progressBarInnerClass} ${props.isRecording ? fillClass : ''}`} />
+        </div>
+    )
+})

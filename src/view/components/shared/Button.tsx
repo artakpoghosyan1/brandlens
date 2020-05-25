@@ -14,16 +14,15 @@ const buttonClass = css`
     font-size: 16px;
     border-radius: 2px;
     font-family: 'Electrolize', sans-serif;
+    cursor: pointer;
 `
 
-export const Button: React.FunctionComponent<IButtonProps> = React.memo(
-    (props) => {
-        return (
-            <>
-                <button className={buttonClass} onClick={props.onClick}>
-                    {props.children}
-                </button>
-            </>
-        )
-    }
-)
+export const Button: React.FunctionComponent<IButtonProps> = React.memo((props) => {
+    return (
+        <>
+            <button className={buttonClass} onClick={props.onClick}>
+                {props.children}
+            </button>
+        </>
+    )
+})

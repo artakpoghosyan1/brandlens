@@ -31,30 +31,24 @@ const previewTitleClass = css`
     margin: 0;
 `
 
-const PreviewPage: React.FunctionComponent<IPreviewPageComponentProps> = React.memo(
-    (props) => {
-        const handleOnAllowClock = () => {
-            props.toggleIsAllowedCamera(true)
-        }
-
-        return (
-            <div className={previewPageClass}>
-                <h1 className={previewTitleClass}>Welcome to Brandlens demo</h1>
-
-                <video src={previewVideo} className={previewVideoClass} />
-
-                <Button onClick={handleOnAllowClock}>Allow camera</Button>
-            </div>
-        )
+const PreviewPage: React.FunctionComponent<IPreviewPageComponentProps> = React.memo((props) => {
+    const handleOnAllowClock = () => {
+        props.toggleIsAllowedCamera(true)
     }
-)
 
-const mapDispatchToProps = (dispatch) => ({
-    toggleIsAllowedCamera: (isAllowedCamera) =>
-        dispatch(toggleIsAllowedCameraAction(isAllowedCamera)),
+    return (
+        <div className={previewPageClass}>
+            <h1 className={previewTitleClass}>Welcome to Brandlens demo</h1>
+
+            <video src={previewVideo} className={previewVideoClass} />
+
+            <Button onClick={handleOnAllowClock}>Allow camera</Button>
+        </div>
+    )
 })
 
-export const PreviewPageComponent = connect(
-    null,
-    mapDispatchToProps
-)(PreviewPage)
+const mapDispatchToProps = (dispatch) => ({
+    toggleIsAllowedCamera: (isAllowedCamera) => dispatch(toggleIsAllowedCameraAction(isAllowedCamera)),
+})
+
+export const PreviewPageComponent = connect(null, mapDispatchToProps)(PreviewPage)

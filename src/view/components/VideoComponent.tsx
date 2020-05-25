@@ -24,54 +24,34 @@ const videoWrapperClass = css`
     transition: 0.7s all;
 `
 
-const Video: React.FunctionComponent<IVideoComponentProps> = React.memo(
-    (props) => {
-        const handleOnrNextStepClick = () => {
-            let step = +props.currentScene.split('_')[1]
-            props.changeCurrentScene(`step_${++step}`)
-        }
-
-        const handleOnrRetryClick = () => {
-            props.setRetry(true)
-        }
-
-        return (
-            <div id="video-wrapper" className={videoWrapperClass}>
-                <video
-                    src={props.videoURL}
-                    id="video"
-                    className="video"
-                    autoPlay
-                    loop
-                />
-
-                <div className="video-btns">
-                    <button
-                        id="retry"
-                        className="button retry"
-                        onClick={handleOnrRetryClick}
-                    />
-                    <button
-                        id="ok"
-                        className="button ok"
-                        onClick={handleOnrNextStepClick}
-                    />
-                </div>
-            </div>
-        )
+const Video: React.FunctionComponent<IVideoComponentProps> = React.memo((props) => {
+    const handleOnrNextStepClick = () => {
+        let step = +props.currentScene.split('_')[1]
+        props.changeCurrentScene(`step_${++step}`)
     }
-)
+
+    const handleOnrRetryClick = () => {
+        props.setRetry(true)
+    }
+
+    return (
+        <div id="video-wrapper" className={videoWrapperClass}>
+            <video src={props.videoURL} id="video" className="video" autoPlay loop />
+
+            <div className="video-btns">
+                <button id="retry" className="button retry" onClick={handleOnrRetryClick} />
+                <button id="ok" className="button ok" onClick={handleOnrNextStepClick} />
+            </div>
+        </div>
+    )
+})
 
 const mapDispatchToProps = (dispatch) => ({
-    changeCurrentScene: (currentScene) =>
-        dispatch(changeCurrentSceneAction(currentScene)),
+    changeCurrentScene: (currentScene) => dispatch(changeCurrentSceneAction(currentScene)),
 })
 
 const mapStateToProps = (state: IState) => ({
     currentScene: currentSceneSelector(state),
 })
 
-export const VideoComponent = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Video)
+export const VideoComponent = connect(mapStateToProps, mapDispatchToProps)(Video)

@@ -16,6 +16,7 @@ const startBtnClass = css`
     left: 50%;
     bottom: 25px;
     transform: translateX(-30px);
+    transition: all 0.2s;
     z-index: 10;
     cursor: pointer;
 `
@@ -24,16 +25,12 @@ const startBtnRecordingClass = css`
     background-color: red;
 `
 
-export const StartRecordingButtonComponent: React.FunctionComponent<IStartRecordingButtonComponentProps> = React.memo(
-    (props) => {
-        return (
-            <button
-                disabled={props.isRecording}
-                className={`${startBtnClass} ${
-                    props.isRecording ? startBtnRecordingClass : ''
-                }`}
-                onClick={props.onClick}
-            />
-        )
-    }
-)
+export const StartRecordingButtonComponent: React.FunctionComponent<IStartRecordingButtonComponentProps> = React.memo((props) => {
+    return (
+        <button
+            disabled={props.isRecording}
+            className={`${startBtnClass} ${props.isRecording ? startBtnRecordingClass : ''}`}
+            onClick={props.onClick}
+        />
+    )
+})

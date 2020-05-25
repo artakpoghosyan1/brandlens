@@ -8,10 +8,7 @@ import thunk from 'redux-thunk'
 import { composeEnhancers } from './data/devTool'
 import { PagesComponent } from './view/components/PagesComponent'
 
-const store = createStore(
-    app,
-    composeEnhancers('effect')(applyMiddleware(thunk))
-)
+const store = createStore(app, composeEnhancers('effect')(applyMiddleware(thunk)))
 
 const App = () => {
     return (

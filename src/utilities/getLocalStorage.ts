@@ -12,9 +12,7 @@ export function getLocalStorage(): IGetLocalStorage {
     }
 
     const getItem = (key: string): any => {
-        const item: string | null = localStorage.getItem(
-            `${STORAGE_PREFIX}_${key}`
-        )
+        const item: string | null = localStorage.getItem(`${STORAGE_PREFIX}_${key}`)
         return item ? JSON.parse(item) : undefined
     }
 
