@@ -3,7 +3,8 @@ import { Color4, Vector3 } from '@babylonjs/core/Maths/math'
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial'
 import { Effect } from '@babylonjs/core/Materials/effect'
 import { VideoTexture } from '@babylonjs/core/Materials/Textures/videoTexture'
-import { Mesh, UniversalCamera } from '@babylonjs/core'
+import { Mesh, Sound, UniversalCamera } from '@babylonjs/core'
+import musicFile from '../../view/assets/images/music_1.mp3'
 
 export function step_1(engine, offsetWidth, offsetHeight) {
     Effect.ShadersStore['customVertexShader'] =
@@ -80,13 +81,7 @@ export function step_1(engine, offsetWidth, offsetHeight) {
         },
         {
             attributes: ['position', 'normal', 'uv'],
-            uniforms: [
-                'world',
-                'worldView',
-                'worldViewProjection',
-                'view',
-                'projection',
-            ],
+            uniforms: ['world', 'worldView', 'worldViewProjection', 'view', 'projection'],
         }
     )
 
@@ -117,6 +112,11 @@ export function step_1(engine, offsetWidth, offsetHeight) {
             frameRate: 30,
         }
     )
+
+    const music = new Sound('Music', musicFile, scene, function () {
+        // Sound has been downloaded & decoded
+        music.play()
+    })
 
     scene.onBeforeRenderObservable.add(function () {
         if (myVideo !== undefined && !isAssigned) {
