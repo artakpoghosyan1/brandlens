@@ -11,7 +11,7 @@
         "format": "prettier --write \"src/**/*.tsx\"",
         "eslint-fix": "eslint --fix \"src/**/*.js\"",
         "predeploy": "yarn build",
-        "deploy": "gh-pages -d build"
+        "deploy": "gh-pages -d dist"
     },
     "repository": {
         "type": "git",
