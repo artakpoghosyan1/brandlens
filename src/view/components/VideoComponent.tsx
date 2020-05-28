@@ -26,8 +26,8 @@ const videoWrapperClass = css`
 
 const Video: React.FunctionComponent<IVideoComponentProps> = React.memo((props) => {
     const handleOnrNextStepClick = () => {
-        let step = +props.currentScene.split('_')[1]
-        props.changeCurrentScene(`step_${++step}`)
+        // let step = +props.currentScene.split('_')[1]
+        // props.changeCurrentScene(`step_${++step}`)
     }
 
     const handleOnrRetryClick = () => {

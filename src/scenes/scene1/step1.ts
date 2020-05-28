@@ -1,14 +1,13 @@
 import { Mesh, UniversalCamera } from '@babylonjs/core'
 import { Animation } from '@babylonjs/core/Animations/animation'
 import { EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing'
-import { AudioSceneComponent } from '@babylonjs/core/audio/audioSceneComponent'
 import { Effect } from '@babylonjs/core/Materials/effect'
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial'
 import { DynamicTexture } from '@babylonjs/core/Materials/Textures/dynamicTexture'
 import { VideoTexture } from '@babylonjs/core/Materials/Textures/videoTexture'
 import { Color4, Vector3 } from '@babylonjs/core/Maths/math'
 import { Scene } from '@babylonjs/core/scene'
-import { Sound } from '@babylonjs/core/Audio/sound'
+import { Sound, AudioSceneComponent } from '@babylonjs/core/Audio'
 import musicFile from '../../view/assets/images/music_1.mp3'
 
 export function step_1(engine, offsetWidth, offsetHeight) {
