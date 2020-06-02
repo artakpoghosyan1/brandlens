@@ -1,4 +1,7 @@
 import { Mesh, UniversalCamera } from '@babylonjs/core'
+import { Analyser } from '@babylonjs/core/Audio/analyser'
+import { Engine } from '@babylonjs/core/Engines/engine'
+import { AudioEngine } from '@babylonjs/core/Audio/audioEngine'
 import { Animation } from '@babylonjs/core/Animations/animation'
 import { EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing'
 import { AudioSceneComponent } from '@babylonjs/core/audio/audioSceneComponent'
@@ -9,6 +12,7 @@ import { VideoTexture } from '@babylonjs/core/Materials/Textures/videoTexture'
 import { Color4, Vector3 } from '@babylonjs/core/Maths/math'
 import { Scene } from '@babylonjs/core/scene'
 import { Sound } from '@babylonjs/core/Audio/sound'
+import { Tools } from '@babylonjs/core/Misc/tools'
 import musicFile from '../../view/assets/images/music_1.mp3'
 
 export function step_1(engine, offsetWidth, offsetHeight) {
@@ -285,33 +289,70 @@ export function step_1(engine, offsetWidth, offsetHeight) {
 
     let music = new Sound('Music', musicFile, scene, function () {
         // Sound has been downloaded & decoded
-        // music.play();
+        music.play()
+    })
+    // scene.sounds = [music]
+    let myAnalyser = new Analyser(scene)
+    let audioEngine = engine
+
+    audioEngine.setGlobalVolume(0.5)
+    audioEngine.connectToAnalyser(myAnalyser)
+
+    myAnalyser.FFT_SIZE = 32
+    myAnalyser.SMOOTHING = 0.9
+
+    let CalculateRMS = function (arr) {
+        let Squares = arr.map((val) => val * val)
+        let Sum = Squares.reduce((acum, val) => acum + val)
+        let Mean = Sum / arr.length
+        return Math.sqrt(Mean)
+    }
+
+    let audioRms: Uint8Array = new Uint8Array(myAnalyser.FFT_SIZE / 2)
+
+    scene.registerBeforeRender(function () {
+        let frequencyData = myAnalyser.getByteFrequencyData()
+        console.log(frequencyData)
+        for (let i = 0; i < myAnalyser.getFrequencyBinCount(); i++) {
+            // audioRms[i] = workingArray[i]
+            // console.log(frequencyData[i])
+        }
+        // console.log(aval)
+        // plane2.position.x = CalculateRMS(audioRms)
     })
 
-    let musicComponent = new AudioSceneComponent(scene)
-    // scene.sounds = [music]
+    scene.registerAfterRender(function () {
+        // console.log(CalculateRMS(audioRms))
+    })
 
     scene.onBeforeRenderObservable.add(function () {
         if (myVideo !== undefined && !isAssigned) {
             if (myVideo.video.readyState == 4) {
                 plane1.material = effectMaterial
-                overlayMaterial.setTexture('textureSampler', textTexture1)
+                effectMaterial.setTexture('textureSampler', textTexture1)
                 plane2.material = overlayMaterial
                 overlayMaterial.setTexture('textureSampler', textTexture2)
-                plane3.material = overlayMaterial
-                plane2.material = overlayMaterial
-                let animation1 = scene.beginAnimation(plane2, 0, 100, true)
-                animation1.onAnimationEnd = () => {
-                    scene.beginAnimation(plane3, 0, 100, true)
-                    console.log('second animation started')
-                }
-                scene.beginDirectAnimation(plane2, [xSlideCool], 0, 50)
-                scene.beginDirectAnimation(plane3, [xSlideWithIt], 50, 100)
+                // plane3.material = overlayMaterial
+                // plane2.material = overlayMaterial
+                // let animation1 = scene.beginAnimation(plane2, 0, 100, true)
+                // animation1.onAnimationEnd = () => {
+                //     scene.beginAnimation(plane3, 0, 100, true)
+                //     console.log('second animation started')
+                // }
+                // scene.beginDirectAnimation(plane2, [xSlideCool], 0, 50)
+                // scene.beginDirectAnimation(plane3, [xSlideWithIt], 50, 100)
 
                 isAssigned = true
             }
         }
     })
+    // var imgNm = 0;
+
+    // scene.registerAfterRender(function(){
+    //     if(imgNm++ < 90) {
+    //         Tools.CreateScreenshotUsingRenderTarget(engine, camera, 200);
+    //     }
+    // })
 
     return scene
 }
