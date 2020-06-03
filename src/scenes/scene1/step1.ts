@@ -1,6 +1,7 @@
 import { Mesh, UniversalCamera } from '@babylonjs/core'
 import { Analyser } from '@babylonjs/core/Audio/analyser'
 import { Engine } from '@babylonjs/core/Engines/engine'
+import * as BABYLON from '@babylonjs/core'
 import { AudioEngine } from '@babylonjs/core/Audio/audioEngine'
 import { Animation } from '@babylonjs/core/Animations/animation'
 import { EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing'
@@ -291,11 +292,14 @@ export function step_1(engine, offsetWidth, offsetHeight) {
         // Sound has been downloaded & decoded
         music.play()
     })
+
     // scene.sounds = [music]
     let myAnalyser = new Analyser(scene)
-    let audioEngine = new AudioEngine()
-    audioEngine.setGlobalVolume(0.5)
-    audioEngine.connectToAnalyser(myAnalyser)
+    // @ts-ignore
+    BABYLON.Engine.audioEngine.connectToAnalyser(myAnalyser)
+    // let audioEngine = new AudioEngine()
+    // audioEngine.setGlobalVolume(0.5)
+    // audioEngine.connectToAnalyser(myAnalyser)
 
     myAnalyser.FFT_SIZE = 32
     myAnalyser.SMOOTHING = 0.9
@@ -309,10 +313,11 @@ export function step_1(engine, offsetWidth, offsetHeight) {
 
     let audioRms: Uint8Array = new Uint8Array(myAnalyser.FFT_SIZE / 2)
 
+    // BABYLON.Engine.audioEngine.connectToAnalyser(myAnalyser)
     scene.registerBeforeRender(function () {
         let frequencyData = myAnalyser.getByteFrequencyData()
-        // frequencyData.forEach((value, index) => console.log(value,index))
         console.log(frequencyData)
+        // frequencyData.forEach((value, index) => console.log(value,index))
         for (let i = 0; i < myAnalyser.getFrequencyBinCount(); i++) {
             // audioRms[i] = frequencyData[i]
             // console.log(frequencyData[i])
