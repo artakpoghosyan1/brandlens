@@ -293,8 +293,7 @@ export function step_1(engine, offsetWidth, offsetHeight) {
     })
     // scene.sounds = [music]
     let myAnalyser = new Analyser(scene)
-    let audioEngine = engine
-
+    let audioEngine = new AudioEngine()
     audioEngine.setGlobalVolume(0.5)
     audioEngine.connectToAnalyser(myAnalyser)
 
@@ -312,12 +311,13 @@ export function step_1(engine, offsetWidth, offsetHeight) {
 
     scene.registerBeforeRender(function () {
         let frequencyData = myAnalyser.getByteFrequencyData()
+        // frequencyData.forEach((value, index) => console.log(value,index))
         console.log(frequencyData)
         for (let i = 0; i < myAnalyser.getFrequencyBinCount(); i++) {
-            // audioRms[i] = workingArray[i]
+            // audioRms[i] = frequencyData[i]
             // console.log(frequencyData[i])
         }
-        // console.log(aval)
+        // console.log(audioRms)
         // plane2.position.x = CalculateRMS(audioRms)
     })
 
