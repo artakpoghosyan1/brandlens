@@ -294,40 +294,43 @@ export function step_1(engine, offsetWidth, offsetHeight) {
     })
 
     // scene.sounds = [music]
-    let myAnalyser = new Analyser(scene)
+
+    let audioContext = BABYLON.Engine.audioEngine.audioContext
+    let myAnalyser = new Analyser(scene) //BABYLON.Engine.audioEngine.audioContext?.createAnalyser() //
+    let audioDestination = BABYLON.Engine.audioEngine.audioContext?.destination
+    myAnalyser!.FFT_SIZE = 64
+    myAnalyser!.SMOOTHING = 0.5
+    let biquadFilter = BABYLON.Engine.audioEngine.audioContext?.createBiquadFilter()
+    biquadFilter!.type = 'lowpass'
+    biquadFilter!.frequency.value = 180
+    // biquadFilter!.gain.setValueAtTime(25, audioContext!.currentTime);
+    myAnalyser.connectAudioNodes(biquadFilter!, audioDestination!)
     // @ts-ignore
     BABYLON.Engine.audioEngine.connectToAnalyser(myAnalyser)
-    // let audioEngine = new AudioEngine()
-    // audioEngine.setGlobalVolume(0.5)
-    // audioEngine.connectToAnalyser(myAnalyser)
+    // myAnalyser?.connect(audioDestination)
 
-    myAnalyser.FFT_SIZE = 32
-    myAnalyser.SMOOTHING = 0.9
+    let smoothstep = function (min, max, value) {
+        var x = Math.max(0, Math.min(1, (value - min) / (max - min)))
+        return x * x * (3 - 2 * x)
+    }
 
-    let CalculateRMS = function (arr) {
+    let CalculateRMS = function (arr: Float32Array) {
         let Squares = arr.map((val) => val * val)
         let Sum = Squares.reduce((acum, val) => acum + val)
         let Mean = Sum / arr.length
         return Math.sqrt(Mean)
     }
 
-    let audioRms: Uint8Array = new Uint8Array(myAnalyser.FFT_SIZE / 2)
+    let audioRms: Float32Array = new Float32Array(myAnalyser!.FFT_SIZE / 2)
 
-    // BABYLON.Engine.audioEngine.connectToAnalyser(myAnalyser)
     scene.registerBeforeRender(function () {
-        let frequencyData = myAnalyser.getByteFrequencyData()
-        console.log(frequencyData)
-        // frequencyData.forEach((value, index) => console.log(value,index))
-        for (let i = 0; i < myAnalyser.getFrequencyBinCount(); i++) {
-            // audioRms[i] = frequencyData[i]
-            // console.log(frequencyData[i])
+        let frequencyData = myAnalyser!.getByteFrequencyData()
+        for (let i = 0; i < myAnalyser!.getFrequencyBinCount(); i++) {
+            audioRms[i] = frequencyData[i] / 255
         }
-        // console.log(audioRms)
-        // plane2.position.x = CalculateRMS(audioRms)
-    })
-
-    scene.registerAfterRender(function () {
-        // console.log(CalculateRMS(audioRms))
+        // console.log(CalculateRMS(audioRms),audioRms)
+        plane2.position.x = CalculateRMS(audioRms) * 2
+        // console.log(plane2.position.x)
     })
 
     scene.onBeforeRenderObservable.add(function () {
