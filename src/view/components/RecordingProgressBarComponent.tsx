@@ -19,7 +19,7 @@ const progressBarInnerClass = css`
     width: 0;
     height: 100%;
     background-color: red;
-    transition: all 15s;
+    transition: all 15s linear;
 `
 
 const fillClass = css`

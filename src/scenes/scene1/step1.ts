@@ -12,7 +12,7 @@ import musicFile from '../../view/assets/images/music-15s.mp3'
 import overlayVideo from '../../view/assets/images/overlayAnimation.mp4'
 import countdownVideo from '../../view/assets/images/countdown.mp4'
 
-export function step_1(engine, offsetWidth, offsetHeight, isRecording) {
+export function step_1(engine, offsetWidth, offsetHeight) {
     let myVideo
     let isAssigned = false
 
@@ -174,12 +174,10 @@ export function step_1(engine, offsetWidth, offsetHeight, isRecording) {
     }
 
     // let playStatus = false
-    if (isRecording) {
-        textTexture2.video.play()
-        setTimeout(() => {
-            textTexture1.video.play()
-        }, 1600)
-    }
+    textTexture2.video.play()
+    setTimeout(() => {
+        textTexture1.video.play()
+    }, 4600)
 
     // let time = 1.0
     // time.toPrecision(5)
@@ -208,11 +206,9 @@ export function step_1(engine, offsetWidth, offsetHeight, isRecording) {
 
     let music = new Sound('Music', musicFile, scene, function () {
         // Sound has been downloaded & decoded
-        if (isRecording) {
+        setTimeout(() => {
             music.play()
-        } else {
-            music.pause()
-        }
+        }, 3000)
     })
 
     let myAnalyser = new Analyser(scene)

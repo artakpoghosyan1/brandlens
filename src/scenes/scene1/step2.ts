@@ -26,7 +26,7 @@ export function step_2(engine, offsetWidth, offsetHeight) {
 
     void main(void) {
         vec2 uv = vUV;
-        vec4 color = texture(textureSampler, uvR);
+        vec4 color = texture(textureSampler, uv);
         gl_FragColor = color;
     }`
 
