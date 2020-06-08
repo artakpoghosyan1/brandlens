@@ -52,7 +52,8 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
         const scene = scene1Collection[props.currentScene](
             engine,
             canvasRef.current!.offsetWidth,
-            canvasRef.current!.offsetHeight
+            canvasRef.current!.offsetHeight,
+            isRecording
         )
 
         engine.runRenderLoop(function () {
@@ -64,7 +65,7 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
         setIsRecordingSupported(VideoRecorder.IsSupported(engine))
         setVideoRecorder(new VideoRecorder(engine))
         setCurrentScene(scene)
-    }, [props.currentScene, retry])
+    }, [props.currentScene, retry, isRecording])
 
     const saveVideoInLocalStorage = (url) => {
         const videoCollection = storage.getItem('videoCollection')
@@ -96,7 +97,7 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
                 setIsRecording(false)
                 setIsRecordingComplete(true)
                 currentScene!.dispose()
-            }, 2000)
+            }, 15000)
         }
     }
 

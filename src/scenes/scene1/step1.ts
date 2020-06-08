@@ -1,37 +1,30 @@
 import { Mesh, UniversalCamera } from '@babylonjs/core'
 import { Analyser } from '@babylonjs/core/Audio/analyser'
-import { Engine } from '@babylonjs/core/Engines/engine'
 import * as BABYLON from '@babylonjs/core'
-import { AudioEngine } from '@babylonjs/core/Audio/audioEngine'
-import { Animation } from '@babylonjs/core/Animations/animation'
-import { EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing'
-import { AudioSceneComponent } from '@babylonjs/core/audio/audioSceneComponent'
 import { Effect } from '@babylonjs/core/Materials/effect'
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial'
-import { DynamicTexture } from '@babylonjs/core/Materials/Textures/dynamicTexture'
 import { VideoTexture } from '@babylonjs/core/Materials/Textures/videoTexture'
 import { Color4, Vector3, Plane } from '@babylonjs/core/Maths/math'
 import { Scene } from '@babylonjs/core/scene'
 import { Sound } from '@babylonjs/core/Audio/sound'
-import { Tools } from '@babylonjs/core/Misc/tools'
-import musicFile from '../../view/assets/images/music_1.mp3'
-import overlayVideo from '../../view/assets/images/overlayVideo.mp4'
 
-export function step_1(engine, offsetWidth, offsetHeight) {
-    Effect.ShadersStore['customVertexShader'] =
-        '\r\n' +
-        'precision highp float;\r\n' +
-        '// Attributes\r\n' +
-        'attribute vec3 position;\r\n' +
-        'attribute vec2 uv;\r\n' +
-        '// Uniforms\r\n' +
-        'uniform mat4 worldViewProjection;\r\n' +
-        '// Varying\r\n' +
-        'varying vec2 vUV;\r\n' +
-        'void main(void) {\r\n' +
-        '    gl_Position = worldViewProjection * vec4(position, 1.0);\r\n' +
-        '    vUV = uv;\r\n' +
-        '}\r\n'
+import musicFile from '../../view/assets/images/music-15s.mp3'
+import overlayVideo from '../../view/assets/images/overlayAnimation.mp4'
+
+export function step_1(engine, offsetWidth, offsetHeight, isRecording) {
+    Effect.ShadersStore['customVertexShader'] = `
+        precision highp float;
+        // Attributes
+        attribute vec3 position;
+        attribute vec2 uv;
+        // Uniforms
+        uniform mat4 worldViewProjection;
+        // Varying
+        varying vec2 vUV;
+        void main(void) {
+            gl_Position = worldViewProjection * vec4(position, 1.0);
+            vUV = uv;
+        }`
 
     Effect.ShadersStore['customFragmentShader'] = `precision highp float;
         varying vec2 vUV;
@@ -53,20 +46,18 @@ export function step_1(engine, offsetWidth, offsetHeight) {
             gl_FragColor = color;
         }`
 
-    Effect.ShadersStore['overlayVertexShader'] =
-        '\r\n' +
-        'precision highp float;\r\n' +
-        '// Attributes\r\n' +
-        'attribute vec3 position;\r\n' +
-        'attribute vec2 uv;\r\n' +
-        '// Uniforms\r\n' +
-        'uniform mat4 worldViewProjection;\r\n' +
-        '// Varying\r\n' +
-        'varying vec2 vUV;\r\n' +
-        'void main(void) {\r\n' +
-        '    gl_Position = worldViewProjection * vec4(position, 1.0);\r\n' +
-        '    vUV = uv;\r\n' +
-        '}\r\n'
+    Effect.ShadersStore['overlayVertexShader'] = `precision highp float;
+        // Attributes
+        attribute vec3 position;
+        attribute vec2 uv;
+        // Uniforms
+        uniform mat4 worldViewProjection;
+        // Varying
+        varying vec2 vUV;
+        void main(void) {
+            gl_Position = worldViewProjection * vec4(position, 1.0);
+            vUV = uv;
+        }`
 
     Effect.ShadersStore['overlayFragmentShader'] = `precision highp float;
 
@@ -99,7 +90,7 @@ export function step_1(engine, offsetWidth, offsetHeight) {
     }
     let plane1 = Mesh.CreatePlane('plane1', 7, scene)
     plane1.rotation.z = Math.PI
-    plane1.position.z = -2.35
+    plane1.position.z = -3.35
     plane1.rotation.y = Math.PI
     plane1.scaling.x = 1.777778
     camera.setTarget(Vector3.Zero())
@@ -107,9 +98,18 @@ export function step_1(engine, offsetWidth, offsetHeight) {
     let plane2 = Mesh.CreatePlane('plane2', 2, scene)
     plane2.position.z = -2.0
     plane2.rotation.y = Math.PI
+    plane2.scaling.scale(3)
 
     const font = 'bold 150px monospace'
     let textTexture1 = new VideoTexture('overlay video', overlayVideo, scene, true)
+    textTexture1.video.pause()
+    textTexture1.video.loop = false
+    // let playStatus = false
+    if (isRecording) {
+        setTimeout(() => {
+            textTexture1.video.play()
+        }, 1600)
+    }
 
     let effectMaterial = new ShaderMaterial(
         'shader',
@@ -170,7 +170,11 @@ export function step_1(engine, offsetWidth, offsetHeight) {
 
     let music = new Sound('Music', musicFile, scene, function () {
         // Sound has been downloaded & decoded
-        music.play()
+        if (isRecording) {
+            music.play()
+        } else {
+            music.pause()
+        }
     })
 
     let myAnalyser = new Analyser(scene)
@@ -231,7 +235,7 @@ export function step_1(engine, offsetWidth, offsetHeight) {
     }
 
     let audioRms: Float32Array = new Float32Array(myAnalyser!.FFT_SIZE / 2)
-
+    console.log(isRecording)
     scene.registerBeforeRender(function () {
         let frequencyData = myAnalyser!.getByteFrequencyData()
         for (let i = 0; i < myAnalyser!.getFrequencyBinCount(); i++) {
