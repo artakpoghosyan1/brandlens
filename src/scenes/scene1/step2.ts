@@ -6,7 +6,7 @@ import { VideoTexture } from '@babylonjs/core/Materials/Textures/videoTexture'
 import { Mesh, UniversalCamera } from '@babylonjs/core'
 
 export function step_2(engine, offsetWidth, offsetHeight) {
-    Effect.ShadersStore['customVertexShader'] =
+    Effect.ShadersStore['defaultVertexShader'] =
         '\r\n' +
         'precision highp float;\r\n' +
         '// Attributes\r\n' +
@@ -21,7 +21,7 @@ export function step_2(engine, offsetWidth, offsetHeight) {
         '    vUV = uv;\r\n' +
         '}\r\n'
 
-    Effect.ShadersStore['customFragmentShader'] = `varying vec2 vUV;
+    Effect.ShadersStore['defaultFragmentShader'] = `varying vec2 vUV;
     uniform sampler2D textureSampler;
 
     void main(void) {
@@ -53,11 +53,11 @@ export function step_2(engine, offsetWidth, offsetHeight) {
     plane1.scaling.x = aspect
 
     let shaderMaterial = new ShaderMaterial(
-        'shader',
+        'camera video shader',
         scene,
         {
-            vertex: 'custom',
-            fragment: 'custom',
+            vertex: 'default',
+            fragment: 'default',
         },
         {
             attributes: ['position', 'normal', 'uv'],
