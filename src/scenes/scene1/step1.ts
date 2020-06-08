@@ -10,8 +10,15 @@ import { Sound } from '@babylonjs/core/Audio/sound'
 
 import musicFile from '../../view/assets/images/music-15s.mp3'
 import overlayVideo from '../../view/assets/images/overlayAnimation.mp4'
+import countdownVideo from '../../view/assets/images/countdown.mp4'
 
 export function step_1(engine, offsetWidth, offsetHeight, isRecording) {
+    let myVideo
+    let isAssigned = false
+
+    let scene = new Scene(engine)
+    scene.clearColor = new Color4(0.0, 0.0, 0.0)
+
     Effect.ShadersStore['customVertexShader'] = `
         precision highp float;
         // Attributes
@@ -74,43 +81,6 @@ export function step_1(engine, offsetWidth, offsetHeight, isRecording) {
             gl_FragColor = vec4(color,alpha);
         }`
 
-    let myVideo
-    let isAssigned = false
-
-    let scene = new Scene(engine)
-    scene.clearColor = new Color4(0.0, 0.0, 0.0)
-
-    let camera = new UniversalCamera('camera1', new Vector3(0, 0, 0), scene)
-    let width = offsetWidth
-    let height = offsetHeight
-    let aspect = 0.5625
-    if (width / height > height / width) {
-        camera.fov = Math.PI / 1.71
-        aspect = 1.77778
-    }
-    let plane1 = Mesh.CreatePlane('plane1', 7, scene)
-    plane1.rotation.z = Math.PI
-    plane1.position.z = -3.35
-    plane1.rotation.y = Math.PI
-    plane1.scaling.x = 1.777778
-    camera.setTarget(Vector3.Zero())
-
-    let plane2 = Mesh.CreatePlane('plane2', 2, scene)
-    plane2.position.z = -2.0
-    plane2.rotation.y = Math.PI
-    plane2.scaling.scale(3)
-
-    const font = 'bold 150px monospace'
-    let textTexture1 = new VideoTexture('overlay video', overlayVideo, scene, true)
-    textTexture1.video.pause()
-    textTexture1.video.loop = false
-    // let playStatus = false
-    if (isRecording) {
-        setTimeout(() => {
-            textTexture1.video.play()
-        }, 1600)
-    }
-
     let effectMaterial = new ShaderMaterial(
         'shader',
         scene,
@@ -137,18 +107,86 @@ export function step_1(engine, offsetWidth, offsetHeight, isRecording) {
         }
     )
 
-    // let time = 1.0
-    // time.toPrecision(5)
-    // setInterval(() => {
-    //     time += 0.001
-    //     effectMaterial.setFloat('time', +time.toPrecision(5))
-    // }, 1)
+    let countdownMaterial = new ShaderMaterial(
+        'shader',
+        scene,
+        {
+            vertex: 'overlay',
+            fragment: 'overlay',
+        },
+        {
+            attributes: ['position', 'normal', 'uv'],
+            uniforms: ['world', 'worldView', 'worldViewProjection', 'view', 'projection'],
+        }
+    )
+
+    let camera = new UniversalCamera('camera1', new Vector3(0, 0, 0), scene)
+    let width = offsetWidth
+    let height = offsetHeight
+    let aspect = 0.5625
+    if (width / height > height / width) {
+        camera.fov = Math.PI / 1.71
+        aspect = 1.77778
+    }
+    let plane1 = Mesh.CreatePlane('plane1', 7, scene)
+    plane1.rotation.z = Math.PI
+    plane1.position.z = -3.35
+    plane1.rotation.y = Math.PI
+    plane1.scaling.x = 1.777778
+    camera.setTarget(Vector3.Zero())
+
+    let overlayPlane = Mesh.CreatePlane('overlay plane', 2, scene)
+    overlayPlane.position.z = -2.0
+    overlayPlane.rotation.y = Math.PI
+    overlayPlane.scaling.scale(3)
+
+    let countdownPlane = Mesh.CreatePlane('countdown plane', 2, scene)
+    countdownPlane.position.z = -2.0
+    countdownPlane.rotation.y = Math.PI
+
+    let textTexture1 = new VideoTexture('overlay video', overlayVideo, scene, true)
+    textTexture1.video.pause()
+    textTexture1.video.loop = false
+
+    let textTexture2 = new VideoTexture('countdown video', countdownVideo, scene, true)
+    textTexture2.video.pause()
+    textTexture2.video.loop = false
+
+    overlayMaterial.setTexture('textureSampler', textTexture1)
+    overlayPlane.material = overlayMaterial
+    countdownMaterial.setTexture('textureSampler', textTexture2)
+    countdownMaterial.alpha = 0.9999
+    countdownMaterial.alphaMode = BABYLON.Engine.ALPHA_ADD
+    countdownPlane.material = countdownMaterial
 
     effectMaterial.backFaceCulling = false
     effectMaterial.alphaMode = BABYLON.Engine.ALPHA_ADD
     overlayMaterial.backFaceCulling = false
     overlayMaterial.alpha = 0.9999
     overlayMaterial.alphaMode = BABYLON.Engine.ALPHA_ADD
+    textTexture1.video.onended = function () {
+        overlayPlane.dispose(true, true)
+        console.log('overlayPlane disposed')
+    }
+    textTexture2.video.onended = function () {
+        // countdownPlane.dispose(false,false)
+        console.log('countdownPlane disposed')
+    }
+
+    // let playStatus = false
+    if (isRecording) {
+        textTexture2.video.play()
+        setTimeout(() => {
+            textTexture1.video.play()
+        }, 1600)
+    }
+
+    // let time = 1.0
+    // time.toPrecision(5)
+    // setInterval(() => {
+    //     time += 0.001
+    //     effectMaterial.setFloat('time', +time.toPrecision(5))
+    // }, 1)
 
     // Create our video texture
     VideoTexture.CreateFromWebCam(
@@ -235,7 +273,7 @@ export function step_1(engine, offsetWidth, offsetHeight, isRecording) {
     }
 
     let audioRms: Float32Array = new Float32Array(myAnalyser!.FFT_SIZE / 2)
-    console.log(isRecording)
+    // console.log(isRecording)
     scene.registerBeforeRender(function () {
         let frequencyData = myAnalyser!.getByteFrequencyData()
         for (let i = 0; i < myAnalyser!.getFrequencyBinCount(); i++) {
@@ -244,16 +282,13 @@ export function step_1(engine, offsetWidth, offsetHeight, isRecording) {
         effectMaterial.setFloat('time', CalculateRMS(audioRms))
         effectMaterial.setFloat('offset', 0.5)
         effectMaterial.setFloat('edge', 5.0)
-        // plane2.position.x = CalculateRMS(audioRms) * 2
+        // overlayPlane.position.x = CalculateRMS(audioRms) * 2
     })
 
     scene.onBeforeRenderObservable.add(function () {
         if (myVideo !== undefined && !isAssigned) {
             if (myVideo.video.readyState == 4) {
                 plane1.material = effectMaterial
-                plane2.material = overlayMaterial
-                overlayMaterial.setTexture('textureSampler', textTexture1)
-
                 isAssigned = true
             }
         }
