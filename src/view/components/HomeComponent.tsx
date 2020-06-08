@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Engine } from '@babylonjs/core/Engines/engine'
 import { VideoRecorder } from '@babylonjs/core/Misc'
+import * as BABYLON from '@babylonjs/core'
 import { StartRecordingButtonComponent } from './StartRecordingButtonComponent'
 import { RecordingProgressBarComponent } from './RecordingProgressBarComponent'
 import { css } from 'emotion'
@@ -39,7 +40,6 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
     const [recordedVideoURL, setRecordedVideoURL] = React.useState<string>('')
     const [currentScene, setCurrentScene] = React.useState<Scene | null>(null)
     const [retry, setRetry] = React.useState<boolean>(false)
-    const [engine, setEngine] = React.useState<Engine | null>(null)
 
     React.useEffect(() => {
         setIsRecordingComplete(false)
@@ -48,8 +48,6 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
             preserveDrawingBuffer: true,
             stencil: true,
         })
-
-        setEngine(engineObj)
 
         const scene = step_2(engineObj, canvasRef.current!.offsetWidth, canvasRef.current!.offsetHeight)
 
@@ -60,7 +58,7 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
         })
 
         setCurrentScene(scene)
-    }, [])
+    }, [retry])
 
     const saveVideoInLocalStorage = (url) => {
         const videoCollection = storage.getItem('videoCollection')
@@ -74,13 +72,23 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
     }
 
     const handleOnStartClick = () => {
-        setRetry(false)
-        const recorder = new VideoRecorder(engine!)
+        const engine_ = new Engine(canvasRef.current, true, {
+            preserveDrawingBuffer: true,
+            stencil: true,
+        })
 
-        if (VideoRecorder.IsSupported(engine!)) {
-            const scene = step_1(engine, canvasRef.current!.offsetWidth, canvasRef.current!.offsetHeight)
+        // const outputNode = Engine.audioEngine.audioContext!.createMediaStreamDestination()
+        // Engine.audioEngine.masterGain.connect(outputNode)
 
-            engine!.runRenderLoop(function () {
+        // @ts-ignore
+        const recorder = new VideoRecorder(engine_! /*, {
+            audioTracks: outputNode.stream.getAudioTracks(),
+        }*/)
+
+        if (VideoRecorder.IsSupported(engine_!)) {
+            const scene = step_1(engine_, canvasRef.current!.offsetWidth, canvasRef.current!.offsetHeight)
+
+            engine_!.runRenderLoop(function () {
                 if (scene) {
                     scene.render()
                 }
@@ -88,6 +96,7 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
 
             setTimeout(() => {
                 setIsRecording(true)
+                debugger
                 recorder!.startRecording('file.webm', 20).then(function (blob) {
                     currentScene!.dispose()
 
@@ -103,7 +112,8 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
                 recorder!.stopRecording()
                 setIsRecording(false)
                 setIsRecordingComplete(true)
-                // currentScene!.dispose()
+                setRetry(false)
+                scene.dispose()
             }, 15000)
         }
     }

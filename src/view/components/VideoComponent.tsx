@@ -50,7 +50,7 @@ const Video: React.FunctionComponent<IVideoComponentProps> = React.memo((props) 
 
             <div className="video-btns">
                 <button id="retry" className={`button ${retryClass}`} onClick={handleOnrRetryClick} />
-                <button id="ok" className={`button ${okClass}`} onClick={handleOnrNextStepClick} />
+                {/*<button id="ok" className={`button ${okClass}`} onClick={handleOnrNextStepClick} />*/}
             </div>
         </div>
     )
