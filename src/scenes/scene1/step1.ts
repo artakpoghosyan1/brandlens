@@ -36,9 +36,7 @@ export function step_1(engine, offsetWidth, offsetHeight) {
     Effect.ShadersStore['customFragmentShader'] = `precision highp float;
         varying vec2 vUV;
         uniform sampler2D textureSampler;
-        uniform float time;
-        uniform float offset;
-        uniform float edge;
+        uniform float iTime;
 
         float phaser(float pct, float phase, float e) {
             return clamp( (phase-1.+pct*(1.+e))/e, 0., 1.);
@@ -46,9 +44,11 @@ export function step_1(engine, offsetWidth, offsetHeight) {
 
         void main(void) {
             vec2 uv = vUV;
-            vec2 uvR = ((uv * 2.0 - 1.0) / vec2(phaser(time, offset * 1.0 / 3.0, edge) + 1.0)) * 0.5 + 0.5;
-            vec2 uvG = ((uv * 2.0 - 1.0) / vec2(phaser(time, offset * 2.0 / 3.0, edge) + 1.0)) * 0.5 + 0.5;
-            vec2 uvB = ((uv * 2.0 - 1.0) / vec2(phaser(time, offset, edge) + 1.0)) * 0.5 + 0.5;
+            float offset = 0.5;
+            float edge = 5.0;
+            vec2 uvR = ((uv * 2.0 - 1.0) / vec2(phaser(iTime, offset * 1.0 / 3.0, edge) + 1.0)) * 0.5 + 0.5;
+            vec2 uvG = ((uv * 2.0 - 1.0) / vec2(phaser(iTime, offset * 2.0 / 3.0, edge) + 1.0)) * 0.5 + 0.5;
+            vec2 uvB = ((uv * 2.0 - 1.0) / vec2(phaser(iTime, offset, edge) + 1.0)) * 0.5 + 0.5;
             vec4 color = vec4(texture(textureSampler, uvR).r,texture(textureSampler, uvG).g,texture(textureSampler, uvB).b, 1.0);
             gl_FragColor = color;
         }`
@@ -81,21 +81,8 @@ export function step_1(engine, offsetWidth, offsetHeight) {
             gl_FragColor = vec4(color,alpha);
         }`
 
-    let effectMaterial = new ShaderMaterial(
-        'shader',
-        scene,
-        {
-            vertex: 'custom',
-            fragment: 'custom',
-        },
-        {
-            attributes: ['position', 'normal', 'uv'],
-            uniforms: ['world', 'worldView', 'worldViewProjection', 'view', 'projection'],
-        }
-    )
-
     let overlayMaterial = new ShaderMaterial(
-        'shader',
+        'overlay material shader',
         scene,
         {
             vertex: 'overlay',
@@ -108,7 +95,7 @@ export function step_1(engine, offsetWidth, offsetHeight) {
     )
 
     let countdownMaterial = new ShaderMaterial(
-        'shader',
+        'countdown material shader',
         scene,
         {
             vertex: 'overlay',
@@ -120,6 +107,18 @@ export function step_1(engine, offsetWidth, offsetHeight) {
         }
     )
 
+    let effectMaterial = new ShaderMaterial(
+        'effect shader',
+        scene,
+        {
+            vertex: 'custom',
+            fragment: 'custom',
+        },
+        {
+            attributes: ['position', 'normal', 'uv'],
+            uniforms: ['world', 'worldView', 'worldViewProjection', 'view', 'projection', 'iTime'],
+        }
+    )
     let camera = new UniversalCamera('camera1', new Vector3(0, 0, 0), scene)
     let width = offsetWidth
     let height = offsetHeight
@@ -153,23 +152,29 @@ export function step_1(engine, offsetWidth, offsetHeight) {
     textTexture2.video.loop = false
 
     overlayMaterial.setTexture('textureSampler', textTexture1)
+    overlayMaterial.backFaceCulling = false
+    overlayMaterial.alpha = 0.9999
+    overlayMaterial.alphaMode = BABYLON.Engine.ALPHA_ADD
+
     overlayPlane.material = overlayMaterial
+
     countdownMaterial.setTexture('textureSampler', textTexture2)
     countdownMaterial.alpha = 0.9999
     countdownMaterial.alphaMode = BABYLON.Engine.ALPHA_ADD
+
     countdownPlane.material = countdownMaterial
 
     effectMaterial.backFaceCulling = false
     effectMaterial.alphaMode = BABYLON.Engine.ALPHA_ADD
-    overlayMaterial.backFaceCulling = false
-    overlayMaterial.alpha = 0.9999
-    overlayMaterial.alphaMode = BABYLON.Engine.ALPHA_ADD
+    // effectMaterial.setFloat('offset', 0.5)
+    // effectMaterial.setFloat('edge', 5.0)
+
     textTexture1.video.onended = function () {
         overlayPlane.dispose(true, true)
         console.log('overlayPlane disposed')
     }
     textTexture2.video.onended = function () {
-        // countdownPlane.dispose(false,false)
+        countdownPlane.dispose(false, false)
         console.log('countdownPlane disposed')
     }
 
@@ -265,19 +270,16 @@ export function step_1(engine, offsetWidth, offsetHeight) {
             filteredValue += value * kernel[i]
         }
         return filteredValue
-        // console.log(filteredValue)
     }
 
     let audioRms: Float32Array = new Float32Array(myAnalyser!.FFT_SIZE / 2)
-    // console.log(isRecording)
     scene.registerBeforeRender(function () {
         let frequencyData = myAnalyser!.getByteFrequencyData()
         for (let i = 0; i < myAnalyser!.getFrequencyBinCount(); i++) {
             audioRms[i] = frequencyData[i] / 255
         }
-        effectMaterial.setFloat('time', CalculateRMS(audioRms))
-        effectMaterial.setFloat('offset', 0.5)
-        effectMaterial.setFloat('edge', 5.0)
+        // console.log(CalculateRMS(audioRms))
+        effectMaterial.setFloat('iTime', CalculateRMS(audioRms))
         // overlayPlane.position.x = CalculateRMS(audioRms) * 2
     })
 
