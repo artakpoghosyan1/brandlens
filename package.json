@@ -22,6 +22,7 @@
     "bugs": {
         "url": "https://github.com/artakpoghosyan1/brandlens/issues"
     },
+    "homepage": "https://artakpoghosyan1.github.io/brandlens",
     "dependencies": {
         "@babylonjs/core": "^4.1.0",
         "@babylonjs/loaders": "^4.1.0",
@@ -60,7 +61,7 @@
         "eslint-loader": "^4.0.2",
         "eslint-plugin-react": "^7.20.0",
         "file-loader": "^6.0.0",
-        "gh-pages": "^2.2.0",
+        "gh-pages": "^3.0.0",
         "google-fonts-webpack-plugin": "^0.4.4",
         "html-webpack-plugin": "^4.3.0",
         "husky": "^4.2.5",

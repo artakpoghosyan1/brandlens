@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import { IState } from '../../data/ISstate'
 import { changeCurrentSceneAction } from '../../data/actionCreators'
 import { currentSceneSelector } from '../../data/selectors/currentSceneSelector'
+import retryIcon from '../assets/images/retry_button.png'
+import okIcon from '../assets/images/ok_button.png'
 
 interface IVideoComponentProps {
     videoURL: string
@@ -24,6 +26,14 @@ const videoWrapperClass = css`
     transition: 0.7s all;
 `
 
+const retryClass = css`
+    background-image: url(${retryIcon});
+`
+
+const okClass = css`
+    background-image: url(${okIcon});
+`
+
 const Video: React.FunctionComponent<IVideoComponentProps> = React.memo((props) => {
     const handleOnrNextStepClick = () => {
         // let step = +props.currentScene.split('_')[1]
@@ -39,8 +49,8 @@ const Video: React.FunctionComponent<IVideoComponentProps> = React.memo((props) 
             <video src={props.videoURL} id="video" className="video" autoPlay loop />
 
             <div className="video-btns">
-                <button id="retry" className="button retry" onClick={handleOnrRetryClick} />
-                <button id="ok" className="button ok" onClick={handleOnrNextStepClick} />
+                <button id="retry" className={`button ${retryClass}`} onClick={handleOnrRetryClick} />
+                {/*<button id="ok" className={`button ${okClass}`} onClick={handleOnrNextStepClick} />*/}
             </div>
         </div>
     )

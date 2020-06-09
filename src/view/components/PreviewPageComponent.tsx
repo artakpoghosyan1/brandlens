@@ -40,7 +40,7 @@ const PreviewPage: React.FunctionComponent<IPreviewPageComponentProps> = React.m
         <div className={previewPageClass}>
             <h1 className={previewTitleClass}>Welcome to Brandlens demo</h1>
 
-            <video src={previewVideo} className={previewVideoClass} />
+            <video src={previewVideo} className={previewVideoClass} autoPlay />
 
             <Button onClick={handleOnAllowClock}>Allow camera</Button>
         </div>

@@ -6,7 +6,7 @@ import { VideoTexture } from '@babylonjs/core/Materials/Textures/videoTexture'
 import { Mesh, UniversalCamera } from '@babylonjs/core'
 
 export function step_2(engine, offsetWidth, offsetHeight) {
-    Effect.ShadersStore['customVertexShader'] =
+    Effect.ShadersStore['defaultVertexShader'] =
         '\r\n' +
         'precision highp float;\r\n' +
         '// Attributes\r\n' +
@@ -21,33 +21,14 @@ export function step_2(engine, offsetWidth, offsetHeight) {
         '    vUV = uv;\r\n' +
         '}\r\n'
 
-    Effect.ShadersStore['customFragmentShader'] =
-        '\r\n' +
-        'precision highp float;\r\n' +
-        'varying vec2 vUV;\r\n' +
-        'uniform sampler2D textureSampler;\r\n' +
-        'uniform float time;\r\n' +
-        'float band(float t, float start, float end, float blur){\r\n' +
-        '   float step1 = smoothstep(start - blur, start + blur, t);\r\n' +
-        '   float step2 = smoothstep(end + blur, end - blur, t);\r\n' +
-        '   return min(step1, step2);\r\n' +
-        '}\r\n' +
-        'void main(void) {\r\n' +
-        '    float num = 2.0;\r\n' +
-        '    vec2 uv = vUV;\r\n' +
-        '   float offset = 1./num;\r\n' +
-        '   float crop = 0.2;\r\n' +
-        '   float feather = 0.1;\r\n' +
-        '   vec4 color = vec4(0);\r\n' +
-        '   for (float i = 0.; i < num; i ++) {\r\n' +
-        '       float xOffset = fract(uv.x - i * offset + crop + time);\r\n' +
-        '       float bleed = band(xOffset, crop, 1. - crop, feather);\r\n' +
-        '       color += texture(textureSampler, vec2(xOffset,uv.y)) * bleed;\r\n' +
-        '   }\r\n' +
-        '   color.rgb = pow(mix(color.rgb, vec3(dot(color.rgb, vec3(0.2125, 0.7154, 0.0721))), vec3(0.8)), vec3(1.3));\r\n' +
-        '   color.a = 1.;\r\n' +
-        '   gl_FragColor = color;\r\n' +
-        '}\r\n'
+    Effect.ShadersStore['defaultFragmentShader'] = `varying vec2 vUV;
+    uniform sampler2D textureSampler;
+
+    void main(void) {
+        vec2 uv = vUV;
+        vec4 color = texture(textureSampler, uv);
+        gl_FragColor = color;
+    }`
 
     let myVideo
     let isAssigned = false
@@ -72,33 +53,19 @@ export function step_2(engine, offsetWidth, offsetHeight) {
     plane1.scaling.x = aspect
 
     let shaderMaterial = new ShaderMaterial(
-        'shader',
+        'camera video shader',
         scene,
         {
-            vertex: 'custom',
-            fragment: 'custom',
+            vertex: 'default',
+            fragment: 'default',
         },
         {
             attributes: ['position', 'normal', 'uv'],
-            uniforms: [
-                'world',
-                'worldView',
-                'worldViewProjection',
-                'view',
-                'projection',
-            ],
+            uniforms: ['world', 'worldView', 'worldViewProjection', 'view', 'projection'],
         }
     )
 
-    let time = 1.0
-    time.toPrecision(5)
-    setInterval(() => {
-        time += 0.001
-        shaderMaterial.setFloat('time', +time.toPrecision(5))
-    }, 1)
-
     shaderMaterial.backFaceCulling = false
-    shaderMaterial.setFloat('time', time)
 
     // Create our video texture
     VideoTexture.CreateFromWebCam(

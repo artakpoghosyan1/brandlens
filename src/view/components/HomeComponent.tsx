@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Engine } from '@babylonjs/core/Engines/engine'
 import { VideoRecorder } from '@babylonjs/core/Misc'
+import * as BABYLON from '@babylonjs/core'
 import { StartRecordingButtonComponent } from './StartRecordingButtonComponent'
 import { RecordingProgressBarComponent } from './RecordingProgressBarComponent'
 import { css } from 'emotion'
@@ -11,6 +12,8 @@ import { scene1 } from '../../scenes/scene1'
 import { currentSceneSelector } from '../../data/selectors/currentSceneSelector'
 import { connect } from 'react-redux'
 import { IState } from '../../data/ISstate'
+import { step_2 } from '../../scenes/scene1/step2'
+import { step_1 } from '../../scenes/scene1/step1'
 
 interface IHomeComponentProps {
     currentScene: string
@@ -32,9 +35,6 @@ const scene1Collection = scene1()
 
 const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) => {
     const canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef()
-
-    const [videoRecorder, setVideoRecorder] = React.useState<VideoRecorder>()
-    const [isRecordingSupported, setIsRecordingSupported] = React.useState<boolean>(false)
     const [isRecording, setIsRecording] = React.useState<boolean>(false)
     const [isRecordingComplete, setIsRecordingComplete] = React.useState<boolean>(false)
     const [recordedVideoURL, setRecordedVideoURL] = React.useState<string>('')
@@ -44,27 +44,21 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
     React.useEffect(() => {
         setIsRecordingComplete(false)
 
-        const engine = new Engine(canvasRef.current, true, {
+        const engineObj = new Engine(canvasRef.current, true, {
             preserveDrawingBuffer: true,
             stencil: true,
         })
 
-        const scene = scene1Collection[props.currentScene](
-            engine,
-            canvasRef.current!.offsetWidth,
-            canvasRef.current!.offsetHeight
-        )
+        const scene = step_2(engineObj, canvasRef.current!.offsetWidth, canvasRef.current!.offsetHeight)
 
-        engine.runRenderLoop(function () {
+        engineObj.runRenderLoop(function () {
             if (scene) {
                 scene.render()
             }
         })
 
-        setIsRecordingSupported(VideoRecorder.IsSupported(engine))
-        setVideoRecorder(new VideoRecorder(engine))
         setCurrentScene(scene)
-    }, [props.currentScene, retry])
+    }, [retry])
 
     const saveVideoInLocalStorage = (url) => {
         const videoCollection = storage.getItem('videoCollection')
@@ -78,25 +72,49 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
     }
 
     const handleOnStartClick = () => {
-        setRetry(false)
+        const engine_ = new Engine(canvasRef.current, true, {
+            preserveDrawingBuffer: true,
+            stencil: true,
+        })
 
-        if (isRecordingSupported) {
-            setIsRecording(true)
+        // const outputNode = Engine.audioEngine.audioContext!.createMediaStreamDestination()
+        // Engine.audioEngine.masterGain.connect(outputNode)
 
-            videoRecorder!.startRecording(null).then(function (blob) {
-                const newBlob = new Blob([blob])
-                const url = URL.createObjectURL(newBlob)
-                setRecordedVideoURL(url)
+        // @ts-ignore
+        const recorder = new VideoRecorder(engine_! /*, {
+            audioTracks: outputNode.stream.getAudioTracks(),
+        }*/)
 
-                saveVideoInLocalStorage(url)
+        if (VideoRecorder.IsSupported(engine_!)) {
+            const scene = step_1(engine_, canvasRef.current!.offsetWidth, canvasRef.current!.offsetHeight)
+
+            engine_!.runRenderLoop(function () {
+                if (scene) {
+                    scene.render()
+                }
             })
 
             setTimeout(() => {
-                videoRecorder!.stopRecording()
+                setIsRecording(true)
+                debugger
+                recorder!.startRecording('file.webm', 20).then(function (blob) {
+                    currentScene!.dispose()
+
+                    const newBlob = new Blob([blob])
+                    const url = URL.createObjectURL(newBlob)
+                    setRecordedVideoURL(url)
+
+                    saveVideoInLocalStorage(url)
+                })
+            }, 3000)
+
+            setTimeout(() => {
+                recorder!.stopRecording()
                 setIsRecording(false)
                 setIsRecordingComplete(true)
-                currentScene!.dispose()
-            }, 2000)
+                setRetry(false)
+                scene.dispose()
+            }, 15000)
         }
     }
 
