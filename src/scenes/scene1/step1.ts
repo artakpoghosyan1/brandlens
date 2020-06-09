@@ -127,11 +127,11 @@ export function step_1(engine, offsetWidth, offsetHeight) {
         camera.fov = Math.PI / 1.71
         aspect = 1.77778
     }
-    let plane1 = Mesh.CreatePlane('plane1', 7, scene)
+    let plane1 = Mesh.CreatePlane('plane1', 4.75, scene)
     plane1.rotation.z = Math.PI
-    plane1.position.z = -3.35
+    plane1.position.z = -5.35
     plane1.rotation.y = Math.PI
-    plane1.scaling.x = 1.777778
+    plane1.scaling.x = aspect
     camera.setTarget(Vector3.Zero())
 
     let overlayPlane = Mesh.CreatePlane('overlay plane', 2, scene)

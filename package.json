@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
-    "homepage": "http://artakpoghosyan1.github.io/brandlens",
     "scripts": {
         "start": "webpack-dev-server --open",
         "dev": "webpack --mode development",

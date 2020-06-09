@@ -96,7 +96,6 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
 
             setTimeout(() => {
                 setIsRecording(true)
-                debugger
                 recorder!.startRecording('file.webm', 20).then(function (blob) {
                     currentScene!.dispose()
 
@@ -114,7 +113,7 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
                 setIsRecordingComplete(true)
                 setRetry(false)
                 scene.dispose()
-            }, 15000)
+            }, 18000)
         }
     }
 
