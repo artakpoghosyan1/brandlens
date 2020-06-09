@@ -44,13 +44,12 @@ export function step_2(engine, offsetWidth, offsetHeight) {
         camera.fov = Math.PI / 1.71
         aspect = 1.77778
     }
-    let plane1 = Mesh.CreatePlane('plane1', 7, scene)
+    let plane1 = Mesh.CreatePlane('plane1', 2.0, scene)
     plane1.rotation.z = Math.PI
-    plane1.position.z = -2.35
+    plane1.position.z = -1.0
     plane1.rotation.y = Math.PI
-    camera.setTarget(Vector3.Zero())
-
     plane1.scaling.x = aspect
+    camera.setTarget(Vector3.Zero())
 
     let shaderMaterial = new ShaderMaterial(
         'camera video shader',
