@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { Engine } from '@babylonjs/core/Engines/engine'
-import { VideoRecorder } from '@babylonjs/core/Misc'
 import * as BABYLON from '@babylonjs/core'
 import { StartRecordingButtonComponent } from './StartRecordingButtonComponent'
 import { RecordingProgressBarComponent } from './RecordingProgressBarComponent'
@@ -36,14 +35,10 @@ const scene1Collection = scene1()
 const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) => {
     const canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef()
     const [isRecording, setIsRecording] = React.useState<boolean>(false)
-    const [isRecordingComplete, setIsRecordingComplete] = React.useState<boolean>(false)
-    const [recordedVideoURL, setRecordedVideoURL] = React.useState<string>('')
-    const [currentScene, setCurrentScene] = React.useState<Scene | null>(null)
+    const [recordedVideoURL, setRecordedVideoURL] = React.useState<string | undefined>(undefined)
     const [retry, setRetry] = React.useState<boolean>(false)
 
     React.useEffect(() => {
-        setIsRecordingComplete(false)
-
         const engineObj = new Engine(canvasRef.current, true, {
             preserveDrawingBuffer: true,
             stencil: true,
@@ -56,8 +51,6 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
                 scene.render()
             }
         })
-
-        setCurrentScene(scene)
     }, [retry])
 
     const saveVideoInLocalStorage = (url) => {
@@ -77,28 +70,17 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
             stencil: true,
         })
 
-        // const outputNode = Engine.audioEngine.audioContext!.createMediaStreamDestination()
-        // Engine.audioEngine.masterGain.connect(outputNode)
-
-        // @ts-ignore
-        const recorder = new VideoRecorder(engine_! /*, {
-            audioTracks: outputNode.stream.getAudioTracks(),
-        }*/)
-
-        if (VideoRecorder.IsSupported(engine_!)) {
-            const scene = step_1(engine_, canvasRef.current!.offsetWidth, canvasRef.current!.offsetHeight)
-
-            engine_!.runRenderLoop(function () {
-                if (scene) {
-                    scene.render()
-                }
-            })
+        if (BABYLON.VideoRecorder.IsSupported(engine_!)) {
+            const { scene, startRecording, stopRecording } = step_1(
+                engine_,
+                canvasRef.current!.offsetWidth,
+                canvasRef.current!.offsetHeight
+            )
 
             setTimeout(() => {
                 setIsRecording(true)
-                recorder!.startRecording('file.webm', 20).then(function (blob) {
-                    currentScene!.dispose()
 
+                startRecording().then(function (blob) {
                     const newBlob = new Blob([blob])
                     const url = URL.createObjectURL(newBlob)
                     setRecordedVideoURL(url)
@@ -108,13 +90,17 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
             }, 3000)
 
             setTimeout(() => {
-                recorder!.stopRecording()
+                stopRecording()
                 setIsRecording(false)
-                setIsRecordingComplete(true)
                 setRetry(false)
                 scene.dispose()
             }, 18000)
         }
+    }
+
+    const retryRecording = () => {
+        setRetry(true)
+        setRecordedVideoURL(undefined)
     }
 
     return (
@@ -127,7 +113,7 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
 
             <StartRecordingButtonComponent onClick={handleOnStartClick} isRecording={isRecording} />
 
-            {isRecordingComplete && !retry && <VideoComponent videoURL={recordedVideoURL} setRetry={setRetry} />}
+            {recordedVideoURL && <VideoComponent videoURL={recordedVideoURL} retryRecording={retryRecording} />}
         </div>
     )
 })

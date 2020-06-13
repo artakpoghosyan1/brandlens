@@ -51,7 +51,7 @@ module.exports = {
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
     },
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     plugins: [
         new HtmlWebpackPlugin({
             template: path.resolve('./index.html'),

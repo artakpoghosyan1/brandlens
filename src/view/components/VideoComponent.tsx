@@ -8,10 +8,10 @@ import retryIcon from '../assets/images/retry_button.png'
 import okIcon from '../assets/images/ok_button.png'
 
 interface IVideoComponentProps {
-    videoURL: string
+    videoURL: string | undefined
     changeCurrentScene: (currentScene: string) => void
     currentScene: string
-    setRetry: (retry: boolean) => void
+    retryRecording: () => void
 }
 
 const videoWrapperClass = css`
@@ -40,16 +40,12 @@ const Video: React.FunctionComponent<IVideoComponentProps> = React.memo((props) 
         // props.changeCurrentScene(`step_${++step}`)
     }
 
-    const handleOnrRetryClick = () => {
-        props.setRetry(true)
-    }
-
     return (
         <div id="video-wrapper" className={videoWrapperClass}>
             <video src={props.videoURL} id="video" className="video" autoPlay loop />
 
             <div className="video-btns">
-                <button id="retry" className={`button ${retryClass}`} onClick={handleOnrRetryClick} />
+                <button id="retry" className={`button ${retryClass}`} onClick={props.retryRecording} />
                 {/*<button id="ok" className={`button ${okClass}`} onClick={handleOnrNextStepClick} />*/}
             </div>
         </div>

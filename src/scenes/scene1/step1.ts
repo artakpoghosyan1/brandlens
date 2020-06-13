@@ -299,5 +299,29 @@ export function step_1(engine, offsetWidth, offsetHeight) {
     //     }
     // })
 
-    return scene
+    /******* Recording *******/
+
+    const outputNode = BABYLON.Engine.audioEngine.audioContext!.createMediaStreamDestination()
+    BABYLON.Engine.audioEngine.masterGain.connect(outputNode)
+
+    // @ts-ignore
+    let recorder = new BABYLON.VideoRecorder(scene.getEngine(), { audioTracks: outputNode.stream.getAudioTracks() })
+
+    engine.runRenderLoop(function () {
+        if (scene) {
+            scene.render()
+        }
+    })
+
+    const startRecording = (): Promise<Blob> => {
+        return recorder!.startRecording('video_file.webm', 20)
+    }
+
+    const stopRecording = () => {
+        recorder!.stopRecording()
+        scene.dispose()
+        engine.stopRenderLoop()
+    }
+
+    return { scene, startRecording, stopRecording }
 }
