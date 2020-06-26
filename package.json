@@ -4,9 +4,9 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "webpack-dev-server --open",
+        "start": "webpack-dev-server --open --config ./webpack/webpack.config.dev.js",
         "dev": "webpack --mode development",
-        "build": "webpack --mode production",
+        "build": "webpack --config ./webpack/webpack.config.prod.js",
         "format": "prettier --write \"src/**/*.tsx\"",
         "eslint-fix": "eslint --fix \"src/**/*.js\"",
         "predeploy": "yarn build",
@@ -25,6 +25,7 @@
     "dependencies": {
         "@babylonjs/core": "^4.1.0",
         "@babylonjs/loaders": "^4.1.0",
+        "@ffmpeg/ffmpeg": "^0.8.3",
         "emotion": "^10.0.27",
         "react": "^16.13.1",
         "react-babylonjs": "^2.2.0",
@@ -40,6 +41,7 @@
         "@babel/preset-react": "^7.9.4",
         "@commitlint/cli": "^8.3.5",
         "@commitlint/config-conventional": "^8.3.4",
+        "@types/": "ffmpeg/ffmpeg",
         "@types/core-js": "^2.5.3",
         "@types/react": "^16.9.35",
         "@types/react-dom": "^16.9.8",
@@ -51,6 +53,7 @@
         "awesome-typescript-loader": "^5.2.1",
         "babel-eslint": "^10.1.0",
         "babel-loader": "^8.1.0",
+        "babel-plugin-import": "^1.13.0",
         "babel-polyfill": "^6.26.0",
         "babel-preset-env": "^1.7.0",
         "clean-webpack-plugin": "^3.0.0",
@@ -72,9 +75,11 @@
         "ts-loader": "^7.0.4",
         "typescript": "^3.9.2",
         "typings": "^2.1.1",
+        "uglifyjs-webpack-plugin": "^2.2.0",
         "url-loader": "^4.1.0",
         "webpack": "^4.43.0",
         "webpack-cli": "^3.3.11",
-        "webpack-dev-server": "^3.11.0"
+        "webpack-dev-server": "^3.11.0",
+        "webpack-merge": "^4.2.2"
     }
 }

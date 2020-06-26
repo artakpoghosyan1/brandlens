@@ -1,6 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const { webpack } = require('webpack')
 
 module.exports = {
     entry: './src/index.tsx',
@@ -8,9 +9,7 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
     },
-    devServer: {
-        contentBase: './dist',
-    },
+    mode: 'development',
     module: {
         rules: [
             {
@@ -51,7 +50,6 @@ module.exports = {
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
     },
-    devtool: 'source-map',
     plugins: [
         new HtmlWebpackPlugin({
             template: path.resolve('./index.html'),

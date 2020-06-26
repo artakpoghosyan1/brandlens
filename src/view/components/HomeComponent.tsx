@@ -13,6 +13,7 @@ import { connect } from 'react-redux'
 import { IState } from '../../data/ISstate'
 import { step_2 } from '../../scenes/scene1/step2'
 import { step_1 } from '../../scenes/scene1/step1'
+// import { createFFmpeg } from '@ffmpeg/ffmpeg'
 
 interface IHomeComponentProps {
     currentScene: string
@@ -37,6 +38,26 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
     const [isRecording, setIsRecording] = React.useState<boolean>(false)
     const [recordedVideoURL, setRecordedVideoURL] = React.useState<string | undefined>(undefined)
     const [retry, setRetry] = React.useState<boolean>(false)
+
+    const [videoSrc, setVideoSrc] = React.useState('')
+    const [message, setMessage] = React.useState('Click Start to transcode')
+
+    // const ffmpeg = createFFmpeg({
+    //     log: true,
+    // });
+
+    // const transcode = async () => {
+    //     setMessage('Loading ffmpeg-core.js');
+    //     await ffmpeg.load();
+    //     setMessage('Start transcoding');
+    //     await ffmpeg.write('file1.webm', '../assets/videos/file1.webm');
+    //     await ffmpeg.write('file2.webm', '../assets/videos/file2.webm');
+    //     await ffmpeg.concatDemuxer(["file1.webm", "file2.webm"], "output--.mp4");
+    //     setMessage('Complete concatenating');
+    //     const data = ffmpeg.read('output--.mp4');
+    //     console.log('++++++++', data)
+    //     setVideoSrc(URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' })));
+    // };
 
     React.useEffect(() => {
         const engineObj = new Engine(canvasRef.current, true, {
@@ -109,11 +130,15 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
 
             <div className="addthis_inline_share_toolbox share" id="share" />
 
-            <canvas id="renderCanvas" ref={canvasRef} />
+            <canvas id="renderCanvas" ref={canvasRef} style={{ display: 'none' }} />
 
             <StartRecordingButtonComponent onClick={handleOnStartClick} isRecording={isRecording} />
 
             {recordedVideoURL && <VideoComponent videoURL={recordedVideoURL} retryRecording={retryRecording} />}
+
+            {/*<video src={videoSrc} controls id='output-video'></video><br/>*/}
+            {/*<button onClick={transcode} >ssjfasdfkljaslfj;askjf</button>*/}
+            <p>{message}</p>
         </div>
     )
 })
