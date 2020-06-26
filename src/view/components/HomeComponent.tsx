@@ -130,7 +130,7 @@ const Home: React.FunctionComponent<IHomeComponentProps> = React.memo((props) =>
 
             <div className="addthis_inline_share_toolbox share" id="share" />
 
-            <canvas id="renderCanvas" ref={canvasRef} style={{ display: 'none' }} />
+            <canvas id="renderCanvas" ref={canvasRef} />
 
             <StartRecordingButtonComponent onClick={handleOnStartClick} isRecording={isRecording} />
 
