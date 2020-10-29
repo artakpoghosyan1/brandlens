@@ -1,23 +1,35 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom'
-import './view/style/main.scss'
-import { app } from './data/reducer'
 import { applyMiddleware, createStore } from 'redux'
 import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+
+import { app } from './data/reducer'
 import { composeEnhancers } from './data/devTool'
-import { PagesComponent } from './view/components/PagesComponent'
+import { StartComponent } from './view/components/StartComponent'
+import { AccessesComponent } from './view/components/AccessesComponent'
+import { RecordingComponent } from './view/components/RecordingComponent'
+import './view/styles/globalStyles'
 
 const store = createStore(app, composeEnhancers('effect')(applyMiddleware(thunk)))
 
-const App = () => {
+const Root = () => {
     return (
-        <>
-            <Provider store={store}>
-                <PagesComponent />
-            </Provider>
-        </>
+        <Provider store={store}>
+            <Router>
+                <Route path="/start">
+                    <StartComponent />
+                </Route>
+                <Route path="/accesses">
+                    <AccessesComponent />
+                </Route>
+                <Route path="/recording">
+                    <RecordingComponent />
+                </Route>
+            </Router>
+        </Provider>
     )
 }
 
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(<Root />, document.getElementById('root'))
