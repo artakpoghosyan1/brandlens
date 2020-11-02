@@ -26,6 +26,7 @@
         "@babylonjs/loaders": "^4.1.0",
         "@emotion/core": "^10.0.35",
         "@emotion/styled": "^10.0.27",
+        "@svgr/webpack": "^5.4.0",
         "emotion": "^10.0.27",
         "react": "^16.13.1",
         "react-babylonjs": "^2.2.0",
@@ -33,6 +34,7 @@
         "react-emotion": "^10.0.0",
         "react-redux": "^7.2.0",
         "react-router-dom": "5.2.0",
+        "react-transition-group": "1.x",
         "redux-thunk": "^2.3.0",
         "reselect": "^4.0.0"
     },

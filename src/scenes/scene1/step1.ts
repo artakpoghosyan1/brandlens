@@ -8,9 +8,9 @@ import { Color4, Vector3, Plane } from '@babylonjs/core/Maths/math'
 import { Scene } from '@babylonjs/core/scene'
 import { Sound } from '@babylonjs/core/Audio/sound'
 
-import musicFile from '../../view/assets/images/music-15s.mp3'
-import overlayVideo from '../../view/assets/images/overlayAnimation.mp4'
-import countdownVideo from '../../view/assets/images/countdown.mp4'
+import musicFile from '../../view/assets/videos/music-15s.mp3'
+import overlayVideo from '../../view/assets/videos/overlayAnimation.mp4'
+import countdownVideo from '../../view/assets/videos/countdown.mp4'
 
 export function step_1(engine, offsetWidth, offsetHeight) {
     let myVideo

@@ -5,3 +5,12 @@ export const containerCss = css`
     margin: 0 auto;
     height: 100%;
 `
+
+export const clearButtonDefaultStylesCss = css`
+    border: none;
+    background: none;
+
+    &:focus {
+        outline: none;
+    }
+`

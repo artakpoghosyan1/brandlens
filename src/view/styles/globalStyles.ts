@@ -16,4 +16,8 @@ injectGlobal`
     body {
         color: ${colors.mainTextColor};
     }
+    
+    ul {
+        list-style: none;
+    }
 `

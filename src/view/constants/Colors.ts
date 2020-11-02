@@ -6,4 +6,7 @@ export const colors = {
     tertiaryTextColor: '#DB3119',
     lightColor: '#F7F7F7',
     infoColor: '#6A6A6A',
+    darkBackgroundColor: '#373738',
+    recordingBtnColor: '#F21111',
+    recordingBtnDarkerColor: '#E61212',
 }
