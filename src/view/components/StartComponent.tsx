@@ -1,12 +1,10 @@
 import * as React from 'react'
 import { TitleComponent } from './shared/TitleComponent'
-import { containerCss } from '../styles/sharedStyles'
 import { css } from 'emotion'
 import { InputComponent } from './shared/InputComponent'
 import { ButtonComponent } from './shared/ButtonComponent'
 import { colors } from '../constants/Colors'
-
-interface IStartComponentProps {}
+import { PageContainerComponent } from './shared/PageContainerComponent'
 
 const previewVideoCss = css`
     margin-bottom: 18px;
@@ -21,14 +19,7 @@ const previewVideoCss = css`
 `
 
 const startPageCss = css`
-    padding: 15px 0;
-    height: 100%;
-`
-
-const contentCss = css`
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    padding: 15px 42px 12px 42px;
 `
 
 const inputsWrapperCss = css`
@@ -47,39 +38,35 @@ const termsCss = css`
     }
 `
 
-export const StartComponent: React.FC<IStartComponentProps> = () => {
+export const StartComponent: React.FC = () => {
     return (
-        <div className={startPageCss}>
-            <div className={containerCss}>
-                <div className={contentCss}>
-                    <TitleComponent>Create your day with us!</TitleComponent>
+        <PageContainerComponent className={startPageCss}>
+            <TitleComponent>Create your day with us!</TitleComponent>
 
-                    <div className={previewVideoCss}>
-                        <iframe
-                            src="https://www.youtube.com/embed/S2nBBMbjS8w"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                        ></iframe>
-                    </div>
-
-                    <div className={inputsWrapperCss}>
-                        <InputComponent type="text" placeholder="Name" />
-                        <InputComponent type="number" placeholder="Age" />
-                    </div>
-
-                    <ButtonComponent dark>Start</ButtonComponent>
-
-                    <div className={termsCss}>
-                        <p>
-                            by continuing, you agree to Brand Lens’s <a href="#">Terms of Use</a>
-                        </p>
-                        <p>
-                            ans confirm that you have read Brand Lens’s <a href="#">Privacy Policy</a>
-                        </p>
-                    </div>
-                </div>
+            <div className={previewVideoCss}>
+                <iframe
+                    src="https://www.youtube.com/embed/S2nBBMbjS8w"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                ></iframe>
             </div>
-        </div>
+
+            <div className={inputsWrapperCss}>
+                <InputComponent type="text" placeholder="Name" />
+                <InputComponent type="number" placeholder="Age" />
+            </div>
+
+            <ButtonComponent dark>Start</ButtonComponent>
+
+            <div className={termsCss}>
+                <p>
+                    by continuing, you agree to Brand Lens’s <a href="#">Terms of Use</a>
+                </p>
+                <p>
+                    ans confirm that you have read Brand Lens’s <a href="#">Privacy Policy</a>
+                </p>
+            </div>
+        </PageContainerComponent>
     )
 }

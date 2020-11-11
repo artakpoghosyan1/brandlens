@@ -5,14 +5,12 @@ import { BackIcon } from '../assets/icons/BackIcon'
 import { clearButtonDefaultStylesCss } from '../styles/sharedStyles'
 import { DoneIcon } from '../assets/icons/DoneIcon'
 import { TrimComponent } from './TrimComponent'
+import { PageContainerComponent } from './shared/PageContainerComponent'
 
 interface IEditVideoComponentProps {}
 
 const editWrapperCss = css`
     background-color: ${colors.codGray};
-    height: 100%;
-    display: flex;
-    flex-direction: column;
     padding: 30px 18px 23px;
 
     position: absolute;
@@ -33,7 +31,7 @@ const editBodyCss = css`
 
 export const EditVideoComponent: React.FC<IEditVideoComponentProps> = React.memo((props) => {
     return (
-        <div className={editWrapperCss}>
+        <PageContainerComponent className={editWrapperCss}>
             <header className={editHeaderCss}>
                 <button className={clearButtonDefaultStylesCss}>
                     <BackIcon />
@@ -62,6 +60,6 @@ export const EditVideoComponent: React.FC<IEditVideoComponentProps> = React.memo
                     ]}
                 />
             </footer>
-        </div>
+        </PageContainerComponent>
     )
 })

@@ -12,14 +12,9 @@ import { RecordingFooterComponent } from './RecordingFooterComponent'
 import { RecordingHeaderComponent } from './RecordingHeaderComponent'
 import { RecordingBodyComponent } from './RecordingBodyComponent'
 import { EditVideoComponent } from './EditVideoComponent'
+import { PageContainerComponent } from './shared/PageContainerComponent'
 
-interface IRecordingComponentProps {}
-
-const recorderPageCss = css`
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-`
+interface IRecordingPageComponentProps {}
 
 const recorderCanvasCss = css`
     height: 100%;
@@ -30,7 +25,7 @@ const recorderCanvasCss = css`
     left: 0;
 `
 
-export const RecordingComponent: React.FC<IRecordingComponentProps> = React.memo(() => {
+export const RecordingPageComponent: React.FC<IRecordingPageComponentProps> = React.memo(() => {
     const canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef()
     const [isRecording, setIsRecording] = React.useState<boolean>(false)
     const [recordedVideoURL, setRecordedVideoURL] = React.useState<string | undefined>(undefined)
@@ -92,7 +87,7 @@ export const RecordingComponent: React.FC<IRecordingComponentProps> = React.memo
     }
 
     return (
-        <div className={recorderPageCss}>
+        <PageContainerComponent>
             <EditVideoComponent />
             <canvas id="renderCanvas" ref={canvasRef} className={recorderCanvasCss} />
 
@@ -101,6 +96,6 @@ export const RecordingComponent: React.FC<IRecordingComponentProps> = React.memo
             <RecordingBodyComponent />
 
             <RecordingFooterComponent />
-        </div>
+        </PageContainerComponent>
     )
 })

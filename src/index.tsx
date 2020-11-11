@@ -7,8 +7,8 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import { composeEnhancers } from './data/devTool'
 import { StartComponent } from './view/components/StartComponent'
-import { AccessesComponent } from './view/components/AccessesComponent'
-import { RecordingComponent } from './view/components/RecordingComponent'
+import { AccessesPageComponent } from './view/components/AccessesPageComponent'
+import { RecordingPageComponent } from './view/components/RecordingPageComponent'
 import './view/styles/globalStyles'
 import { reducer } from './data/reducer'
 
@@ -21,10 +21,10 @@ const Root = () => {
                     <StartComponent />
                 </Route>
                 <Route path="/accesses">
-                    <AccessesComponent />
+                    <AccessesPageComponent />
                 </Route>
                 <Route path="/recording">
-                    <RecordingComponent />
+                    <RecordingPageComponent />
                 </Route>
             </Router>
         </Provider>
