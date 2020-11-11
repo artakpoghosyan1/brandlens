@@ -1,23 +1,25 @@
-import { IState } from './ISstate'
 import * as types from './actions'
+import { IState } from './IState'
 
-const defaultState: IState = {
-    isAllowedCamera: false,
-    currentScene: 'step_1',
+const initialState: IState = {
+    currentEffects: null,
+    selectedTimer: 0,
 }
 
-export function app(state: IState = defaultState, action) {
+export function reducer(state = initialState, action) {
     switch (action.type) {
-        case types.TOGGLE_IS_ALLOWED_CAMERA:
+        case types.SET_CURRENT_EFFECTS:
             return {
                 ...state,
-                isAllowedCamera: action.isAllowedCamera,
+                currentEffects: action.currentEffect,
             }
-        case types.CHANGE_CURRENT_SCENE:
+
+        case types.SET_SELECTED_TIMER:
             return {
                 ...state,
-                currentScene: action.currentScene,
+                selectedTimer: action.selectedTimer,
             }
+
         default:
             return state
     }

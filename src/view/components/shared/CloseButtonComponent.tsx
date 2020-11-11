@@ -6,9 +6,6 @@ import { CloseIcon } from '../../assets/icons/CloseIcon'
 interface ICloseButtonComponentProps {}
 
 const closeIconCss = css`
-    position: absolute;
-    top: 19px;
-    left: 19px;
     cursor: pointer;
 `
 

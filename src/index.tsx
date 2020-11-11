@@ -5,15 +5,14 @@ import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-import { app } from './data/reducer'
 import { composeEnhancers } from './data/devTool'
 import { StartComponent } from './view/components/StartComponent'
 import { AccessesComponent } from './view/components/AccessesComponent'
 import { RecordingComponent } from './view/components/RecordingComponent'
 import './view/styles/globalStyles'
+import { reducer } from './data/reducer'
 
-const store = createStore(app, composeEnhancers('effect')(applyMiddleware(thunk)))
-
+const store = createStore(reducer, composeEnhancers('effect')(applyMiddleware(thunk)))
 const Root = () => {
     return (
         <Provider store={store}>

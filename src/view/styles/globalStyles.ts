@@ -1,5 +1,6 @@
 import { injectGlobal } from 'emotion'
 import { colors } from '../constants/Colors'
+import { cssTransitionClasses } from './cssTransitionClasses'
 
 injectGlobal`
     *,
@@ -20,4 +21,6 @@ injectGlobal`
     ul {
         list-style: none;
     }
+    
+    ${cssTransitionClasses}
 `

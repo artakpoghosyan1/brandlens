@@ -1,15 +1,15 @@
 import * as types from './actions'
 
-export function toggleIsAllowedCameraAction(isAllowedCamera: boolean) {
+export function setCurrentEffectAction(currentEffect) {
     return {
-        type: types.TOGGLE_IS_ALLOWED_CAMERA,
-        isAllowedCamera,
+        type: types.SET_CURRENT_EFFECTS,
+        currentEffect,
     }
 }
 
-export function changeCurrentSceneAction(currentScene: string) {
+export function setSelectedTimerAction(selectedTimer) {
     return {
-        type: types.CHANGE_CURRENT_SCENE,
-        currentScene,
+        type: types.SET_SELECTED_TIMER,
+        selectedTimer,
     }
 }

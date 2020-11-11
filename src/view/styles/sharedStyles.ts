@@ -14,3 +14,7 @@ export const clearButtonDefaultStylesCss = css`
         outline: none;
     }
 `
+
+export const recordingPageContainerCss = css`
+    padding: 0 8px 0 18px;
+`

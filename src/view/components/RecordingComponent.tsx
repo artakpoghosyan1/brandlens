@@ -8,10 +8,16 @@ import { step_1 } from '../../scenes/scene1/step1'
 import { RecordingButtonComponent } from './RecordingButtonComponent'
 import { RecordingControlsComponent } from './RecordingControlsComponent'
 import { CloseButtonComponent } from './shared/CloseButtonComponent'
+import { RecordingFooterComponent } from './RecordingFooterComponent'
+import { RecordingHeaderComponent } from './RecordingHeaderComponent'
+import { RecordingBodyComponent } from './RecordingBodyComponent'
+import { EditVideoComponent } from './EditVideoComponent'
 
 interface IRecordingComponentProps {}
 
 const recorderPageCss = css`
+    display: flex;
+    flex-direction: column;
     height: 100%;
 `
 
@@ -21,6 +27,7 @@ const recorderCanvasCss = css`
     position: absolute;
     z-index: -1;
     top: 0;
+    left: 0;
 `
 
 export const RecordingComponent: React.FC<IRecordingComponentProps> = React.memo(() => {
@@ -86,13 +93,14 @@ export const RecordingComponent: React.FC<IRecordingComponentProps> = React.memo
 
     return (
         <div className={recorderPageCss}>
+            <EditVideoComponent />
             <canvas id="renderCanvas" ref={canvasRef} className={recorderCanvasCss} />
 
-            <CloseButtonComponent />
+            <RecordingHeaderComponent />
 
-            <RecordingControlsComponent />
+            <RecordingBodyComponent />
 
-            <RecordingButtonComponent />
+            <RecordingFooterComponent />
         </div>
     )
 })

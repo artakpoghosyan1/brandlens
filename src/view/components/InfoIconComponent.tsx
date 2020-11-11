@@ -1,10 +1,13 @@
 import * as React from 'react'
-import { css } from 'emotion'
+import { InfoIcon } from '../assets/icons/InfoIcon'
+import { clearButtonDefaultStylesCss } from '../styles/sharedStyles'
 
 interface IInfoIconComponentProps {}
 
-const infoIconCss = css``
-
-export const InfoIconComponent: React.FC<IInfoIconComponentProps> = React.memo((props) => {
-    return <button className={infoIconCss}></button>
+export const InfoIconComponent: React.FC<IInfoIconComponentProps> = React.memo(() => {
+    return (
+        <button className={clearButtonDefaultStylesCss}>
+            <InfoIcon />
+        </button>
+    )
 })

@@ -5,33 +5,53 @@ import { colors } from '../constants/Colors'
 
 interface IRecordingButtonComponentProps {}
 
+const borderCss = css`
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    top: -9px;
+    left: -9px;
+    width: calc(100% + 18px);
+    height: calc(100% + 18px);
+    z-index: -1;
+    transition: all 0.2s ease-in-out;
+`
+
 const recordingButtonCss = css`
+    &,
+    & span {
+        border-radius: 50%;
+        position: absolute;
+    }
+
     ${clearButtonDefaultStylesCss};
-    border-radius: 50%;
-    width: 90px;
-    height: 90px;
-    position: relative;
-    border: 10px solid #fff;
-    overflow: hidden;
-    position: absolute;
-    bottom: 55px;
+    transition: all 0.3s ease-in-out;
+    background-color: ${colors.recordingBtnColor};
+    width: 70px;
+    height: 70px;
+    bottom: 0;
     left: 50%;
     margin-left: -45px;
+    box-shadow: inset 0 0 0 10px ${colors.recordingBtnDarkerColor};
 
-    &:after {
-        background-color: ${colors.recordingBtnColor};
-        box-shadow: inset 0 0 0 10px ${colors.recordingBtnDarkerColor};
-        display: block;
-        border-radius: 50%;
-        top: 0;
-        left: 0;
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
+    &:hover {
+        box-shadow: inset 0 0 0 0 ${colors.recordingBtnDarkerColor}, 0 0 0 10px rgba(222, 8, 21, 0.4);
+
+        span {
+            width: 8px;
+            height: 8px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-4px, -4px);
+            z-index: 1;
+        }
     }
 `
 
 export const RecordingButtonComponent: React.FC<IRecordingButtonComponentProps> = React.memo(() => {
-    return <button className={recordingButtonCss} />
+    return (
+        <button className={recordingButtonCss}>
+            <span className={borderCss} />
+        </button>
+    )
 })

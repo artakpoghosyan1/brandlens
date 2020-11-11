@@ -1,5 +1,6 @@
 export const colors = {
     mainTextColor: '#000',
+    disabledTextColor: '#B6B6B6',
     darkGrayColor: '#030303',
     inputBgColor: '#EBEAEA',
     secondaryTextColor: '#868686',
@@ -9,4 +10,6 @@ export const colors = {
     darkBackgroundColor: '#373738',
     recordingBtnColor: '#F21111',
     recordingBtnDarkerColor: '#E61212',
+    codGray: '#101010',
+    caribbeanGreen: '#0EC1A1',
 }
