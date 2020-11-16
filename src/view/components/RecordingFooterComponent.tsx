@@ -16,8 +16,6 @@ interface IRecordingFooterComponentProps {
     currentEffects: IEffect[] | null
 }
 
-const footerCss = css``
-
 const footerActionsCss = css`
     ${recordingPageContainerCss};
     position: relative;
@@ -72,7 +70,7 @@ export const RecordingFooter: React.FC<IRecordingFooterComponentProps> = React.m
     const openEffects = !!props.currentEffects
 
     return (
-        <footer className={footerCss}>
+        <footer>
             <CSSTransition in={!openEffects} timeout={200} classNames="record-wrapper" unmountOnExit>
                 <div className={footerActionsCss}>
                     <ControlButtonComponent

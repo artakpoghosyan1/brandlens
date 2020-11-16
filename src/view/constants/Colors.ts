@@ -12,4 +12,7 @@ export const colors = {
     recordingBtnDarkerColor: '#E61212',
     codGray: '#101010',
     caribbeanGreen: '#0EC1A1',
+    springGreen: '#00F060',
+    mercury: '#E6E6E6',
+    alto: '#D8D8D8',
 }

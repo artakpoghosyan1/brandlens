@@ -5,9 +5,8 @@ import { BackIcon } from '../assets/icons/BackIcon'
 import { clearButtonDefaultStylesCss } from '../styles/sharedStyles'
 import { DoneIcon } from '../assets/icons/DoneIcon'
 import { TrimComponent } from './TrimComponent'
-import { PageContainerComponent } from './shared/PageContainerComponent'
-
-interface IEditVideoComponentProps {}
+import { PageComponent } from './shared/PageComponent'
+import { PageHeaderComponent } from './shared/PageHeaderComponent'
 
 const editWrapperCss = css`
     background-color: ${colors.codGray};
@@ -19,30 +18,24 @@ const editWrapperCss = css`
     z-index: 100;
 `
 
-const editHeaderCss = css`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-`
-
 const editBodyCss = css`
     flex-grow: 1;
 `
 
-export const EditVideoComponent: React.FC<IEditVideoComponentProps> = React.memo((props) => {
+export const EditVideoComponent: React.FC = React.memo(() => {
     return (
-        <PageContainerComponent className={editWrapperCss}>
-            <header className={editHeaderCss}>
-                <button className={clearButtonDefaultStylesCss}>
-                    <BackIcon />
-                </button>
-
+        <PageComponent className={editWrapperCss}>
+            <PageHeaderComponent>
                 <button className={clearButtonDefaultStylesCss}>
                     <DoneIcon />
                 </button>
-            </header>
 
-            <div className={editBodyCss}></div>
+                <button className={clearButtonDefaultStylesCss}>
+                    <BackIcon />
+                </button>
+            </PageHeaderComponent>
+
+            <div className={editBodyCss} />
 
             <footer>
                 <TrimComponent
@@ -60,6 +53,6 @@ export const EditVideoComponent: React.FC<IEditVideoComponentProps> = React.memo
                     ]}
                 />
             </footer>
-        </PageContainerComponent>
+        </PageComponent>
     )
 })

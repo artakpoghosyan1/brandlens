@@ -3,6 +3,7 @@ import { css } from 'emotion'
 export const clearButtonDefaultStylesCss = css`
     border: none;
     background: none;
+    cursor: pointer;
 
     &:focus {
         outline: none;

@@ -24,7 +24,6 @@ const controlsWrapperCss = css`
 `
 
 const controlsListCss = css`
-    margin-top: 40px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;

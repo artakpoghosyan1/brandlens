@@ -4,7 +4,7 @@ import { css } from 'emotion'
 import { InputComponent } from './shared/InputComponent'
 import { ButtonComponent } from './shared/ButtonComponent'
 import { colors } from '../constants/Colors'
-import { PageContainerComponent } from './shared/PageContainerComponent'
+import { PageComponent } from './shared/PageComponent'
 
 const previewVideoCss = css`
     margin-bottom: 18px;
@@ -38,9 +38,9 @@ const termsCss = css`
     }
 `
 
-export const StartComponent: React.FC = () => {
+export const StartPageComponent: React.FC = () => {
     return (
-        <PageContainerComponent className={startPageCss}>
+        <PageComponent className={startPageCss}>
             <TitleComponent>Create your day with us!</TitleComponent>
 
             <div className={previewVideoCss}>
@@ -49,7 +49,7 @@ export const StartComponent: React.FC = () => {
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
-                ></iframe>
+                />
             </div>
 
             <div className={inputsWrapperCss}>
@@ -57,7 +57,9 @@ export const StartComponent: React.FC = () => {
                 <InputComponent type="number" placeholder="Age" />
             </div>
 
-            <ButtonComponent dark>Start</ButtonComponent>
+            <ButtonComponent dark fullBleed>
+                Start
+            </ButtonComponent>
 
             <div className={termsCss}>
                 <p>
@@ -67,6 +69,6 @@ export const StartComponent: React.FC = () => {
                     ans confirm that you have read Brand Lens’s <a href="#">Privacy Policy</a>
                 </p>
             </div>
-        </PageContainerComponent>
+        </PageComponent>
     )
 }

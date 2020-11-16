@@ -12,7 +12,7 @@ import { RecordingFooterComponent } from './RecordingFooterComponent'
 import { RecordingHeaderComponent } from './RecordingHeaderComponent'
 import { RecordingBodyComponent } from './RecordingBodyComponent'
 import { EditVideoComponent } from './EditVideoComponent'
-import { PageContainerComponent } from './shared/PageContainerComponent'
+import { PageComponent } from './shared/PageComponent'
 
 interface IRecordingPageComponentProps {}
 
@@ -87,7 +87,7 @@ export const RecordingPageComponent: React.FC<IRecordingPageComponentProps> = Re
     }
 
     return (
-        <PageContainerComponent>
+        <PageComponent>
             <EditVideoComponent />
             <canvas id="renderCanvas" ref={canvasRef} className={recorderCanvasCss} />
 
@@ -96,6 +96,6 @@ export const RecordingPageComponent: React.FC<IRecordingPageComponentProps> = Re
             <RecordingBodyComponent />
 
             <RecordingFooterComponent />
-        </PageContainerComponent>
+        </PageComponent>
     )
 })

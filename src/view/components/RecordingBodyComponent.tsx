@@ -1,19 +1,18 @@
 import * as React from 'react'
 import { RecordingControlsComponent } from './RecordingControlsComponent'
-import { css } from 'emotion'
 import { recordingPageContainerCss } from '../styles/sharedStyles'
+import { PageBodyComponent } from './shared/PageBodyComponent'
+import { css } from 'emotion'
 
-interface IRecordingBodyComponentProps {}
-
-const bodyCss = css`
+const recordingBodyCss = css`
     ${recordingPageContainerCss};
-    flex-grow: 1;
+    margin-top: 40px;
 `
 
-export const RecordingBodyComponent: React.FC<IRecordingBodyComponentProps> = React.memo(() => {
+export const RecordingBodyComponent: React.FC = React.memo(() => {
     return (
-        <div className={bodyCss}>
+        <PageBodyComponent className={recordingBodyCss}>
             <RecordingControlsComponent />
-        </div>
+        </PageBodyComponent>
     )
 })

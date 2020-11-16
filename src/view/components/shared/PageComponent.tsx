@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { css, cx } from 'emotion'
 
-interface IPageContainerComponentProps extends React.DOMAttributes<HTMLElement> {
+interface IPageComponentProps extends React.DOMAttributes<HTMLElement> {
     className?: string
 }
 
@@ -11,7 +11,7 @@ const pageCss = css`
     flex-direction: column;
 `
 
-export const PageContainerComponent: React.FC<IPageContainerComponentProps> = (props) => {
+export const PageComponent: React.FC<IPageComponentProps> = (props) => {
     const { className, ...rest } = props
 
     return (

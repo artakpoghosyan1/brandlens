@@ -4,7 +4,7 @@ import { TitleComponent } from './shared/TitleComponent'
 import { colors } from '../constants/Colors'
 import { ButtonComponent } from './shared/ButtonComponent'
 import { CloseButtonComponent } from './shared/CloseButtonComponent'
-import { PageContainerComponent } from './shared/PageContainerComponent'
+import { PageComponent } from './shared/PageComponent'
 
 interface IAccessesPageComponentProps {}
 
@@ -35,7 +35,7 @@ const closeBtnCss = css`
 
 export const AccessesPageComponent: React.FC<IAccessesPageComponentProps> = React.memo(() => {
     return (
-        <PageContainerComponent className={accessesCss}>
+        <PageComponent className={accessesCss}>
             <CloseButtonComponent className={closeBtnCss} />
 
             <TitleComponent className={accessesTitleCss}>Enable access so you can start taking videos</TitleComponent>
@@ -45,7 +45,7 @@ export const AccessesPageComponent: React.FC<IAccessesPageComponentProps> = Reac
                 <li>Enable Microphone Access</li>
             </ul>
 
-            <ButtonComponent>Allow Access</ButtonComponent>
-        </PageContainerComponent>
+            <ButtonComponent fullBleed>Allow Access</ButtonComponent>
+        </PageComponent>
     )
 })
