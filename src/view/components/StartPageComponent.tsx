@@ -1,10 +1,18 @@
 import * as React from 'react'
 import { TitleComponent } from './shared/TitleComponent'
 import { css } from 'emotion'
+import { useHistory } from 'react-router-dom'
 import { InputComponent } from './shared/InputComponent'
 import { ButtonComponent } from './shared/ButtonComponent'
 import { colors } from '../constants/Colors'
 import { PageComponent } from './shared/PageComponent'
+import { connect } from 'react-redux'
+import { setUserDataAction } from '../../data/actionCreators'
+import { IUser } from '../../models/IUser'
+
+interface IStartPageComponentProps {
+    setUserData: (userDate: IUser) => void
+}
 
 const previewVideoCss = css`
     margin-bottom: 18px;
@@ -22,8 +30,10 @@ const startPageCss = css`
     padding: 15px 42px 12px 42px;
 `
 
-const inputsWrapperCss = css`
-    margin-bottom: 24px;
+const inputsWrapperCss = css``
+
+const startBtnCss = css`
+    margin-top: 24px;
 `
 
 const termsCss = css`
@@ -38,7 +48,50 @@ const termsCss = css`
     }
 `
 
-export const StartPageComponent: React.FC = () => {
+export const StartPage: React.FC<IStartPageComponentProps> = ({ setUserData }) => {
+    const [userName, setUserName] = React.useState<string>('')
+    const [userAge, setUserAge] = React.useState<number | null>(null)
+    const [errorMessages, setErrorMessages] = React.useState<{ [fieldName: string]: string }>({})
+    const history = useHistory()
+
+    const onUserNameChangeHandler = React.useCallback(({ target: { value } }: any): void => {
+        setUserName(value)
+    }, [])
+
+    const onUserAgeChangeHandler = React.useCallback(({ target: { value } }: any): void => {
+        setUserAge(value)
+    }, [])
+
+    const onStartSubmitHandler = React.useCallback(
+        (e): void => {
+            e.preventDefault()
+
+            if (!userName) {
+                setErrorMessages((errorMessages) => ({
+                    ...errorMessages,
+                    name: 'Name field is required',
+                }))
+            }
+
+            if (!userAge) {
+                setErrorMessages((errorMessages) => ({
+                    ...errorMessages,
+                    age: 'Age field is required',
+                }))
+            }
+
+            if (userName && userAge) {
+                setUserData({
+                    name: userName.trim(),
+                    age: parseInt(`${userAge}`),
+                })
+
+                history.push('/accesses')
+            }
+        },
+        [userName, userAge]
+    )
+
     return (
         <PageComponent className={startPageCss}>
             <TitleComponent>Create your day with us!</TitleComponent>
@@ -53,13 +106,32 @@ export const StartPageComponent: React.FC = () => {
             </div>
 
             <div className={inputsWrapperCss}>
-                <InputComponent type="text" placeholder="Name" />
-                <InputComponent type="number" placeholder="Age" />
-            </div>
+                <InputComponent
+                    type="text"
+                    placeholder="Name"
+                    value={userName}
+                    onChange={onUserNameChangeHandler}
+                    errorMessage={errorMessages.name}
+                />
+                <InputComponent
+                    type="number"
+                    placeholder="Age"
+                    value={userAge || undefined}
+                    onChange={onUserAgeChangeHandler}
+                    errorMessage={errorMessages.age}
+                />
 
-            <ButtonComponent dark fullBleed>
-                Start
-            </ButtonComponent>
+                <ButtonComponent
+                    type="submit"
+                    onClick={onStartSubmitHandler}
+                    className={startBtnCss}
+                    dark
+                    fullBleed
+                    data-testid="start-button"
+                >
+                    Start
+                </ButtonComponent>
+            </div>
 
             <div className={termsCss}>
                 <p>
@@ -72,3 +144,9 @@ export const StartPageComponent: React.FC = () => {
         </PageComponent>
     )
 }
+
+const mapDispatchToProps = (dispatch) => ({
+    setUserData: (userDate) => dispatch(setUserDataAction(userDate)),
+})
+
+export const StartPageComponent = connect(null, mapDispatchToProps)(StartPage)

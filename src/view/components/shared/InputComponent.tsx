@@ -2,9 +2,11 @@ import * as React from 'react'
 import { css } from 'emotion'
 import { colors } from '../../constants/Colors'
 
-interface IInputComponentProps {
+interface IInputComponentProps extends React.DOMAttributes<HTMLElement> {
     type: string
     placeholder: string
+    value: string | number | undefined
+    errorMessage?: string
 }
 
 const inputCss = css`
@@ -24,10 +26,19 @@ const inputWrapperCss = css`
     }
 `
 
-export const InputComponent: React.FC<IInputComponentProps> = React.memo((props) => {
+const errorMessageCss = css`
+    color: ${colors.errorColor};
+    font-size: 12px;
+    padding-left: 16px;
+    margin-top: 7px;
+`
+
+export const InputComponent: React.FC<IInputComponentProps> = React.memo(({ value, errorMessage, ...rest }) => {
     return (
         <div className={inputWrapperCss}>
-            <input type={props.type} className={inputCss} placeholder={props.placeholder} />
+            <input className={inputCss} value={value || ''} {...rest} />
+
+            {errorMessage && <p className={errorMessageCss}>{errorMessage}</p>}
         </div>
     )
 })

@@ -2,10 +2,11 @@ import * as React from 'react'
 import { colors } from '../../constants/Colors'
 import styled from '@emotion/styled'
 
-interface IButtonComponentProps {
+interface IButtonComponentProps extends React.DOMAttributes<HTMLElement> {
     dark?: boolean
     fullBleed?: boolean
     className?: string
+    type?: 'button' | 'submit' | 'reset' | undefined
 }
 
 const ButtonStyled = styled('button')<IButtonComponentProps>`
@@ -19,15 +20,16 @@ const ButtonStyled = styled('button')<IButtonComponentProps>`
     border-radius: 46px;
     width: ${(props) => (props.fullBleed ? '100%' : 'auto')};
     align-items: center;
+    justify-content: center;
 
     svg {
         margin-left: 10px;
     }
 `
 
-export const ButtonComponent: React.FC<IButtonComponentProps> = React.memo(({ dark, children, fullBleed, className }) => {
+export const ButtonComponent: React.FC<IButtonComponentProps> = React.memo(({ children, className, type, ...rest }) => {
     return (
-        <ButtonStyled className={className || ''} dark={dark}>
+        <ButtonStyled className={className || ''} type={type ? type : 'button'} {...rest}>
             {children}
         </ButtonStyled>
     )

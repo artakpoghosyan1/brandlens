@@ -13,6 +13,7 @@ import { RecordingHeaderComponent } from './RecordingHeaderComponent'
 import { RecordingBodyComponent } from './RecordingBodyComponent'
 import { EditVideoComponent } from './EditVideoComponent'
 import { PageComponent } from './shared/PageComponent'
+import { TimerComponent } from './Trim/TimerComponent'
 
 interface IRecordingPageComponentProps {}
 
@@ -96,6 +97,8 @@ export const RecordingPageComponent: React.FC<IRecordingPageComponentProps> = Re
             <RecordingBodyComponent />
 
             <RecordingFooterComponent />
+
+            {/*<TimerComponent/>*/}
         </PageComponent>
     )
 })

@@ -1,10 +1,12 @@
 import * as React from 'react'
 import { css } from 'emotion'
+import { useHistory } from 'react-router-dom'
 import { TitleComponent } from './shared/TitleComponent'
 import { colors } from '../constants/Colors'
 import { ButtonComponent } from './shared/ButtonComponent'
 import { CloseButtonComponent } from './shared/CloseButtonComponent'
 import { PageComponent } from './shared/PageComponent'
+import { CameraIcon } from '../assets/icons/CameraIcon'
 
 interface IAccessesPageComponentProps {}
 
@@ -34,6 +36,20 @@ const closeBtnCss = css`
 `
 
 export const AccessesPageComponent: React.FC<IAccessesPageComponentProps> = React.memo(() => {
+    const history = useHistory()
+
+    const onClickHandler = React.useCallback(async () => {
+        const constraints = {
+            video: true,
+            audio: true,
+        }
+
+        const mediaStream = await navigator.mediaDevices.getUserMedia(constraints)
+        if (mediaStream.active) {
+            history.push('/recording')
+        }
+    }, [history])
+
     return (
         <PageComponent className={accessesCss}>
             <CloseButtonComponent className={closeBtnCss} />
@@ -41,11 +57,15 @@ export const AccessesPageComponent: React.FC<IAccessesPageComponentProps> = Reac
             <TitleComponent className={accessesTitleCss}>Enable access so you can start taking videos</TitleComponent>
 
             <ul className={accessesListCss}>
-                <li>Enable Camera Access</li>
+                <li>
+                    <CameraIcon /> Enable Camera Access
+                </li>
                 <li>Enable Microphone Access</li>
             </ul>
 
-            <ButtonComponent fullBleed>Allow Access</ButtonComponent>
+            <ButtonComponent fullBleed onClick={onClickHandler}>
+                Allow Access
+            </ButtonComponent>
         </PageComponent>
     )
 })

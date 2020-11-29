@@ -2080,6 +2080,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-motion@*":
+  version "0.0.29"
+  resolved "https://registry.yarnpkg.com/@types/react-motion/-/react-motion-0.0.29.tgz#1a22e11bc1452150e8aa58463f72dd921ff10721"
+  integrity sha512-MD1DbdcDKruR0zz5Z0XIlrkPdjDMgYx0AHhbaoTBpDirUTt8Bd7x6OFE458nEINZxfPW0EcEOw2O8S/WwGNLsA==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-redux@^7.1.9":
   version "7.1.9"
   resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-7.1.9.tgz#280c13565c9f13ceb727ec21e767abe0e9b4aec3"
@@ -2089,6 +2096,14 @@
     "@types/react" "*"
     hoist-non-react-statics "^3.3.0"
     redux "^4.0.0"
+
+"@types/react-slider@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-slider/-/react-slider-1.0.0.tgz#bdb29573d6cee2b269ff2814b3cadd08f5dc48d5"
+  integrity sha512-OQpKbS1J96UwUGOqMiVedFM5ds73HQmYufL3yEoLQ51NCUof2A2NQqpeu5U1EwZQI3MhERU78uXhKJzY7Lbqbw==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-motion" "*"
 
 "@types/react-transition-group@^4.4.0":
   version "4.4.0"
@@ -8513,6 +8528,11 @@ react-router@5.2.0:
     react-is "^16.6.0"
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
+
+react-slider@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-slider/-/react-slider-1.1.2.tgz#d059f801615ef2cb3f6e226c232b2a4cbee0e615"
+  integrity sha512-rPz4K7IhMg4Jj1vvEywv8/ePhAQ9mfh4BKQl8DxB7AN6v1UD7fp0og6BnoH8MfBH1AwtvxKRELbSGl443EuczQ==
 
 react-transition-group@^4.4.1:
   version "4.4.1"

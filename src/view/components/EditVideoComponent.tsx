@@ -4,9 +4,12 @@ import { colors } from '../constants/Colors'
 import { BackIcon } from '../assets/icons/BackIcon'
 import { clearButtonDefaultStylesCss } from '../styles/sharedStyles'
 import { DoneIcon } from '../assets/icons/DoneIcon'
-import { TrimComponent } from './TrimComponent'
+import { TrimComponent } from './Trim/TrimComponent'
 import { PageComponent } from './shared/PageComponent'
 import { PageHeaderComponent } from './shared/PageHeaderComponent'
+import { TrimVideoComponent } from './Trim/TrimVideoComponent'
+import { PageBodyComponent } from './shared/PageBodyComponent'
+import { TrimContext } from '../contexts/TrimContext'
 
 const editWrapperCss = css`
     background-color: ${colors.codGray};
@@ -18,41 +21,63 @@ const editWrapperCss = css`
     z-index: 100;
 `
 
+const editHeaderCss = css`
+    margin-bottom: 30px;
+`
+
 const editBodyCss = css`
-    flex-grow: 1;
+    position: relative;
+    padding-bottom: 60px;
 `
 
 export const EditVideoComponent: React.FC = React.memo(() => {
+    const [videoCurrentTime, setVideoCurrentTime] = React.useState<number>(0)
+    const [headerValue, setHeaderValue] = React.useState<number>(0)
+    const [shouldPauseTrimmingVideo, setShouldPauseTrimmingVideo] = React.useState<boolean>(false)
+    const [leftTrimValue, setLeftTrimValue] = React.useState<number>(0)
+    const [rightTrimValue, setRightTrimValue] = React.useState<number>(0)
+
+    const onHeaderChange = React.useCallback((value: number | number[] | undefined | null): void => {
+        if (!Array.isArray(value) && value) {
+            setVideoCurrentTime(value)
+            setHeaderValue(value)
+        }
+    }, [])
+
     return (
-        <PageComponent className={editWrapperCss}>
-            <PageHeaderComponent>
-                <button className={clearButtonDefaultStylesCss}>
-                    <DoneIcon />
-                </button>
+        <TrimContext.Provider
+            value={{
+                leftTrimValue,
+                setLeftTrimValue,
+                rightTrimValue,
+                setRightTrimValue,
+                videoCurrentTime,
+                setVideoCurrentTime,
+                headerValue,
+                setHeaderValue,
+                onHeaderChange,
+                shouldPauseTrimmingVideo,
+                setShouldPauseTrimmingVideo,
+            }}
+        >
+            <PageComponent className={editWrapperCss}>
+                <PageHeaderComponent className={editHeaderCss}>
+                    <button className={clearButtonDefaultStylesCss}>
+                        <DoneIcon />
+                    </button>
 
-                <button className={clearButtonDefaultStylesCss}>
-                    <BackIcon />
-                </button>
-            </PageHeaderComponent>
+                    <button className={clearButtonDefaultStylesCss}>
+                        <BackIcon />
+                    </button>
+                </PageHeaderComponent>
 
-            <div className={editBodyCss} />
-
-            <footer>
-                <TrimComponent
-                    frameImages={[
-                        'https://cdn.shopify.com/s/files/1/0088/7940/7219/products/179862.DKRS-2.jpg?v=1584474109',
-                        'https://cdn.shopify.com/s/files/1/0088/7940/7219/products/179862.DKRS-2.jpg?v=1584474109',
-                        'https://cdn.shopify.com/s/files/1/0088/7940/7219/products/179862.DKRS-2.jpg?v=1584474109',
-                        'https://cdn.shopify.com/s/files/1/0088/7940/7219/products/179862.DKRS-2.jpg?v=1584474109',
-                        'https://cdn.shopify.com/s/files/1/0088/7940/7219/products/179862.DKRS-2.jpg?v=1584474109',
-                        'https://cdn.shopify.com/s/files/1/0088/7940/7219/products/179862.DKRS-2.jpg?v=1584474109',
-                        'https://cdn.shopify.com/s/files/1/0088/7940/7219/products/179862.DKRS-2.jpg?v=1584474109',
-                        'https://cdn.shopify.com/s/files/1/0088/7940/7219/products/179862.DKRS-2.jpg?v=1584474109',
-                        'https://cdn.shopify.com/s/files/1/0088/7940/7219/products/179862.DKRS-2.jpg?v=1584474109',
-                        'https://cdn.shopify.com/s/files/1/0088/7940/7219/products/179862.DKRS-2.jpg?v=1584474109',
-                    ]}
-                />
-            </footer>
-        </PageComponent>
+                <PageBodyComponent className={editBodyCss}>
+                    <TrimVideoComponent />
+                </PageBodyComponent>
+                <footer>
+                    <TrimComponent />
+                </footer>
+            </PageComponent>
+        </TrimContext.Provider>
     )
 })

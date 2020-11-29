@@ -4,6 +4,8 @@ import { IState } from './IState'
 const initialState: IState = {
     currentEffects: null,
     selectedTimer: 0,
+    userData: null,
+    videoData: null,
 }
 
 export function reducer(state = initialState, action) {
@@ -18,6 +20,12 @@ export function reducer(state = initialState, action) {
             return {
                 ...state,
                 selectedTimer: action.selectedTimer,
+            }
+
+        case types.SET_USER_DATE:
+            return {
+                ...state,
+                userData: action.userData,
             }
 
         default:

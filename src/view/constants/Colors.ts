@@ -15,4 +15,6 @@ export const colors = {
     springGreen: '#00F060',
     mercury: '#E6E6E6',
     alto: '#D8D8D8',
+    emperor: '#4F4F4F',
+    errorColor: '#e3053a',
 }
