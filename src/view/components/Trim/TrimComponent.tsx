@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { css } from 'emotion'
 import { colors } from '../../constants/Colors'
-import { IVideoData } from '../../../models/VideoData'
+import { IRecordedVideo } from '../../../models/IRecordedVideo'
 import { IState } from '../../../data/IState'
-import { videoDataSelector } from '../../../data/selectors/videoDataSelector'
+import { currentRecordedVideoSelector } from '../../../data/selectors/currentRecordedVideoSelector'
 import { connect } from 'react-redux'
 import { DRAG_BTN_WIDTH, TrimSliderComponent } from './TrimSliderComponent'
 import { FrameThumbsComponent } from './FrameThumbsComponent'
@@ -11,7 +11,7 @@ import { TrimContext } from '../../contexts/TrimContext'
 import { frameUnitToSecond, getFrameUnit, getTrimmedWidthInPx, mapRange } from '../../../utilities/utilities'
 
 interface ITrimComponentProps {
-    videoData: IVideoData
+    currentRecordedVideo: IRecordedVideo
 }
 
 const trimCss = css`
@@ -42,7 +42,7 @@ const trimCss = css`
     }
 `
 
-export const Trim: React.FC<ITrimComponentProps> = React.memo(({ videoData: { framesCount, fps } }) => {
+export const Trim: React.FC<ITrimComponentProps> = React.memo(({ currentRecordedVideo: { framesCount, fps } }) => {
     const [leftDragValue, setLeftDragValue] = React.useState<number>(0)
     const [rightDragValue, setRightDragValue] = React.useState<number>(0)
 
@@ -145,7 +145,7 @@ export const Trim: React.FC<ITrimComponentProps> = React.memo(({ videoData: { fr
 })
 
 const mapStateToProps = (state: IState) => ({
-    videoData: videoDataSelector(state),
+    currentRecordedVideo: currentRecordedVideoSelector(state),
 })
 
 export const TrimComponent = connect(mapStateToProps)(Trim)

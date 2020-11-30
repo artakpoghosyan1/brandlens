@@ -5,7 +5,8 @@ const initialState: IState = {
     currentEffects: null,
     selectedTimer: 0,
     userData: null,
-    videoData: null,
+    recordedVideos: [],
+    currentRecordedVideo: null,
 }
 
 export function reducer(state = initialState, action) {

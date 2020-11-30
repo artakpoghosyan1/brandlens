@@ -2,17 +2,17 @@ import * as React from 'react'
 import Slider from 'react-rangeslider'
 import { TrimContext } from '../../contexts/TrimContext'
 import styled from '@emotion/styled'
-import { css, cx } from 'emotion'
+import { css } from 'emotion'
 import { IState } from '../../../data/IState'
-import { videoDataSelector } from '../../../data/selectors/videoDataSelector'
+import { currentRecordedVideoSelector } from '../../../data/selectors/currentRecordedVideoSelector'
 import { connect } from 'react-redux'
-import { IVideoData } from '../../../models/VideoData'
+import { IRecordedVideo } from '../../../models/IRecordedVideo'
 import { getFrameUnit, getTrimmedWidthInPx } from '../../../utilities/utilities'
 
 interface IFrameThumbsComponentProps {
     leftDragValue: number
     rightDragValue: number
-    videoData: IVideoData
+    currentRecordedVideo: IRecordedVideo
     frameThumbsRef: React.RefObject<HTMLDivElement>
     parentWidth: number
     rightTrimValue: number
@@ -98,7 +98,7 @@ export const FrameThumbs: React.FC<IFrameThumbsComponentProps> = React.memo(
         leftDragValue,
         rightDragValue,
         parentWidth,
-        videoData: { framesCount, frameThumbnails },
+        currentRecordedVideo: { framesCount, frameThumbnails },
         frameThumbsRef,
     }) => {
         const { headerValue, onHeaderChange, setShouldPauseTrimmingVideo } = React.useContext(TrimContext)
@@ -149,7 +149,7 @@ export const FrameThumbs: React.FC<IFrameThumbsComponentProps> = React.memo(
 )
 
 const mapStateToProps = (state: IState) => ({
-    videoData: videoDataSelector(state),
+    currentRecordedVideo: currentRecordedVideoSelector(state),
 })
 
 export const FrameThumbsComponent = connect(mapStateToProps)(FrameThumbs)

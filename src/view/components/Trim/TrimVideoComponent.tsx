@@ -3,13 +3,13 @@ import video from '../../assets/videos/test4.webm'
 import { css } from 'emotion'
 import { TrimContext } from '../../contexts/TrimContext'
 import { IState } from '../../../data/IState'
-import { videoDataSelector } from '../../../data/selectors/videoDataSelector'
+import { currentRecordedVideoSelector } from '../../../data/selectors/currentRecordedVideoSelector'
 import { connect } from 'react-redux'
-import { IVideoData } from '../../../models/VideoData'
+import { IRecordedVideo } from '../../../models/IRecordedVideo'
 import { trimmedValueToSecond } from '../../../utilities/utilities'
 
 interface ITrimVideoComponentProps {
-    videoData: IVideoData
+    currentRecordedVideo: IRecordedVideo
 }
 
 const videoWrapperCss = css`
@@ -27,7 +27,7 @@ const videoCss = css`
 
 let intervalId: any
 
-export const TrimVideo: React.FC<ITrimVideoComponentProps> = React.memo(({ videoData: { framesCount, fps } }) => {
+export const TrimVideo: React.FC<ITrimVideoComponentProps> = React.memo(({ currentRecordedVideo: { framesCount, fps } }) => {
     const videoRef: React.RefObject<HTMLVideoElement> = React.createRef()
     const {
         videoCurrentTime,
@@ -83,7 +83,7 @@ export const TrimVideo: React.FC<ITrimVideoComponentProps> = React.memo(({ video
 })
 
 const mapStateToProps = (state: IState) => ({
-    videoData: videoDataSelector(state),
+    currentRecordedVideo: currentRecordedVideoSelector(state),
 })
 
 export const TrimVideoComponent = connect(mapStateToProps)(TrimVideo)
