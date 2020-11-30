@@ -32,17 +32,9 @@ const editBodyCss = css`
 
 export const EditVideoComponent: React.FC = React.memo(() => {
     const [videoCurrentTime, setVideoCurrentTime] = React.useState<number>(0)
-    const [headerValue, setHeaderValue] = React.useState<number>(0)
     const [shouldPauseTrimmingVideo, setShouldPauseTrimmingVideo] = React.useState<boolean>(false)
     const [leftTrimValue, setLeftTrimValue] = React.useState<number>(0)
     const [rightTrimValue, setRightTrimValue] = React.useState<number>(0)
-
-    const onHeaderChange = React.useCallback((value: number | number[] | undefined | null): void => {
-        if (!Array.isArray(value) && value) {
-            setVideoCurrentTime(value)
-            setHeaderValue(value)
-        }
-    }, [])
 
     return (
         <TrimContext.Provider
@@ -53,9 +45,6 @@ export const EditVideoComponent: React.FC = React.memo(() => {
                 setRightTrimValue,
                 videoCurrentTime,
                 setVideoCurrentTime,
-                headerValue,
-                setHeaderValue,
-                onHeaderChange,
                 shouldPauseTrimmingVideo,
                 setShouldPauseTrimmingVideo,
             }}

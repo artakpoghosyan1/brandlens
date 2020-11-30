@@ -45,73 +45,74 @@ const trimCss = css`
 export const Trim: React.FC<ITrimComponentProps> = React.memo(({ currentRecordedVideo: { framesCount, fps } }) => {
     const [leftDragValue, setLeftDragValue] = React.useState<number>(0)
     const [rightDragValue, setRightDragValue] = React.useState<number>(0)
-
     const [parentWidth, setParentWidth] = React.useState<number>(0)
     const [trimDirection, setTrimDirection] = React.useState<string | null>(null)
 
-    const trim = React.useContext(TrimContext)
+    const trimContext = React.useContext(TrimContext)
     const frameThumbsRef: React.RefObject<HTMLDivElement> = React.useRef(null)
-
-    const onTrimHandler = React.useCallback(
-        (e, ui, isLeft) => {
-            if (isLeft) {
-                trim.setLeftTrimValue((leftTrimValue) =>
-                    Math.round(leftTrimValue + mapRange(ui.deltaX, 0, parentWidth, 0, framesCount))
-                )
-                setLeftDragValue((leftTrimX) => leftTrimX + ui.deltaX)
-            } else {
-                setRightDragValue((rightDragValue) => rightDragValue + ui.deltaX)
-                trim.setRightTrimValue((rightTrimValue) =>
-                    Math.round(rightTrimValue + mapRange(ui.deltaX, 0, parentWidth, 0, framesCount))
-                )
-            }
-        },
-        [framesCount, parentWidth, trim.videoCurrentTime, trim.headerValue]
-    )
-
-    const onTrimStartHandler = React.useCallback((value, isLeftStart) => {
-        setTrimDirection(isLeftStart ? 'left' : 'right')
-        trim.setShouldPauseTrimmingVideo(true)
-    }, [])
-
-    const onTrimStopHandler = React.useCallback(() => {
-        trim.setShouldPauseTrimmingVideo(false)
-        setTrimDirection(null)
-    }, [trim.videoCurrentTime])
-
-    const frameUnit = React.useMemo(() => getFrameUnit(parentWidth, framesCount), [parentWidth, framesCount])
-
-    const getTrimSlideMaxPoint = (trimValue) =>
-        getTrimmedWidthInPx(framesCount, trimValue, frameUnit) - frameUnitToSecond(frameUnit, fps)
-
-    const leftSlideBounds = React.useMemo(
-        () => ({
-            left: 0,
-            right: getTrimSlideMaxPoint(trim.rightTrimValue), // limitation for trimming to the right
-        }),
-        [trim.rightTrimValue, framesCount, fps, parentWidth]
-    )
-
-    const rightSlideBounds = React.useMemo(
-        () => ({
-            left: -getTrimSlideMaxPoint(trim.leftTrimValue), // limitation for trimming to the left,
-            right: 0,
-        }),
-        [trim.leftTrimValue, framesCount, fps, parentWidth]
-    )
 
     React.useEffect(() => {
         setParentWidth(frameThumbsRef.current!.offsetWidth)
     }, [frameThumbsRef.current])
 
-    React.useEffect(() => {
-        if (trimDirection && trim.shouldPauseTrimmingVideo) {
-            const trimValue = trimDirection === 'left' ? trim.leftTrimValue : framesCount + trim.rightTrimValue
+    const onTrimHandler = React.useCallback(
+        (e, ui, isLeft) => {
+            if (isLeft) {
+                trimContext.setLeftTrimValue((leftTrimValue) =>
+                    Math.round(leftTrimValue + mapRange(ui.deltaX, 0, parentWidth, 0, framesCount))
+                )
+                setLeftDragValue((leftTrimX) => leftTrimX + ui.deltaX)
+            } else {
+                setRightDragValue((rightDragValue) => rightDragValue + ui.deltaX)
+                trimContext.setRightTrimValue((rightTrimValue) =>
+                    Math.round(rightTrimValue + mapRange(ui.deltaX, 0, parentWidth, 0, framesCount))
+                )
+            }
+        },
+        [framesCount, parentWidth, trimContext.videoCurrentTime]
+    )
 
-            trim.setVideoCurrentTime(trimValue)
-            trim.setHeaderValue(trimValue)
+    const onTrimStartHandler = React.useCallback((value, isLeftStart) => {
+        setTrimDirection(isLeftStart ? 'left' : 'right')
+        trimContext.setShouldPauseTrimmingVideo(true)
+    }, [])
+
+    const onTrimStopHandler = React.useCallback(() => {
+        trimContext.setShouldPauseTrimmingVideo(false)
+        setTrimDirection(null)
+    }, [trimContext.videoCurrentTime])
+
+    React.useEffect(() => {
+        if (trimDirection && trimContext.shouldPauseTrimmingVideo) {
+            const trimValue =
+                trimDirection === 'left' ? trimContext.leftTrimValue : framesCount - Math.abs(trimContext.rightTrimValue)
+
+            trimContext.setVideoCurrentTime(trimValue)
         }
-    }, [trim.shouldPauseTrimmingVideo, trim.leftTrimValue, trim.rightTrimValue, trimDirection])
+    }, [trimContext.shouldPauseTrimmingVideo, trimContext.leftTrimValue, trimContext.rightTrimValue, trimDirection])
+
+    const frameUnit = React.useMemo(() => getFrameUnit(parentWidth, framesCount), [parentWidth, framesCount])
+
+    const getTrimSliderMaxPoint = React.useCallback(
+        (trimValue) => getTrimmedWidthInPx(framesCount, trimValue, frameUnit) - frameUnitToSecond(frameUnit, fps),
+        [framesCount, frameUnit, fps]
+    )
+
+    const leftSlideBounds = React.useMemo(
+        () => ({
+            left: 0,
+            right: getTrimSliderMaxPoint(trimContext.rightTrimValue), // limitation for trimming to the right (1s)
+        }),
+        [trimContext.rightTrimValue, framesCount, fps, parentWidth]
+    )
+
+    const rightSlideBounds = React.useMemo(
+        () => ({
+            left: -getTrimSliderMaxPoint(trimContext.leftTrimValue), // limitation for trimming to the left (1s)
+            right: 0,
+        }),
+        [trimContext.leftTrimValue, framesCount, fps, parentWidth]
+    )
 
     return (
         <div className={trimCss}>
@@ -128,8 +129,8 @@ export const Trim: React.FC<ITrimComponentProps> = React.memo(({ currentRecorded
                 parentWidth={parentWidth}
                 leftDragValue={Math.round(leftDragValue)}
                 rightDragValue={rightDragValue}
-                rightTrimValue={trim.rightTrimValue}
-                leftTrimValue={trim.leftTrimValue}
+                rightTrimValue={trimContext.rightTrimValue}
+                leftTrimValue={trimContext.leftTrimValue}
                 frameThumbsRef={frameThumbsRef}
             />
 

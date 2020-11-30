@@ -2,9 +2,6 @@ import * as React from 'react'
 
 interface ITrimContext {
     videoCurrentTime: number
-    headerValue: number
-    setHeaderValue: React.Dispatch<React.SetStateAction<number>>
-    onHeaderChange: (value: number | number[] | undefined | null) => void
     shouldPauseTrimmingVideo: boolean
     setShouldPauseTrimmingVideo: React.Dispatch<React.SetStateAction<boolean>>
     setVideoCurrentTime: React.Dispatch<React.SetStateAction<number>>

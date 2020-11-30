@@ -101,9 +101,9 @@ export const FrameThumbs: React.FC<IFrameThumbsComponentProps> = React.memo(
         currentRecordedVideo: { framesCount, frameThumbnails },
         frameThumbsRef,
     }) => {
-        const { headerValue, onHeaderChange, setShouldPauseTrimmingVideo } = React.useContext(TrimContext)
+        const { videoCurrentTime, setVideoCurrentTime, setShouldPauseTrimmingVideo } = React.useContext(TrimContext)
 
-        const [headerWidth, setHeaderWidth] = React.useState(0)
+        const [headerWidth, setHeaderWidth] = React.useState<number>(0)
         const frameUnit = React.useMemo(() => getFrameUnit(parentWidth, framesCount), [parentWidth, framesCount])
 
         const onBeforeChangeHandler = React.useCallback(() => {
@@ -114,8 +114,15 @@ export const FrameThumbs: React.FC<IFrameThumbsComponentProps> = React.memo(
             setShouldPauseTrimmingVideo(false)
         }, [])
 
+        const onHeaderChange = React.useCallback((value: number | number[] | undefined | null): void => {
+            if (!Array.isArray(value) && value) {
+                setVideoCurrentTime(value)
+            }
+        }, [])
+
         React.useEffect(() => {
-            const trimmedValue = Math.abs(rightTrimValue) + leftTrimValue
+            const trimmedValue: number = Math.abs(rightTrimValue) + leftTrimValue
+
             setHeaderWidth(getTrimmedWidthInPx(framesCount, trimmedValue, frameUnit))
         }, [framesCount, leftTrimValue, rightTrimValue, frameUnit])
 
@@ -131,7 +138,7 @@ export const FrameThumbs: React.FC<IFrameThumbsComponentProps> = React.memo(
                     className={`${headerSliderCss} header-slider`}
                     min={leftTrimValue}
                     max={framesCount + rightTrimValue}
-                    value={headerValue}
+                    value={videoCurrentTime}
                     orientation="horizontal"
                     onChangeStart={onBeforeChangeHandler}
                     onChange={onHeaderChange}

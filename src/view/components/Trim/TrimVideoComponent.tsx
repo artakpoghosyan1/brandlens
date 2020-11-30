@@ -29,14 +29,9 @@ let intervalId: any
 
 export const TrimVideo: React.FC<ITrimVideoComponentProps> = React.memo(({ currentRecordedVideo: { framesCount, fps } }) => {
     const videoRef: React.RefObject<HTMLVideoElement> = React.createRef()
-    const {
-        videoCurrentTime,
-        setHeaderValue,
-        headerValue,
-        shouldPauseTrimmingVideo,
-        leftTrimValue,
-        rightTrimValue,
-    } = React.useContext(TrimContext)
+    const { videoCurrentTime, setVideoCurrentTime, shouldPauseTrimmingVideo, leftTrimValue, rightTrimValue } = React.useContext(
+        TrimContext
+    )
 
     React.useEffect(() => {
         videoRef.current!.currentTime = videoCurrentTime / fps
@@ -49,17 +44,17 @@ export const TrimVideo: React.FC<ITrimVideoComponentProps> = React.memo(({ curre
     }, [shouldPauseTrimmingVideo, videoCurrentTime])
 
     React.useEffect(() => {
-        if (headerValue > framesCount - Math.abs(rightTrimValue)) {
+        if (videoCurrentTime > framesCount - Math.abs(rightTrimValue)) {
             videoRef.current!.currentTime = trimmedValueToSecond(leftTrimValue, fps)
-            setHeaderValue(leftTrimValue)
+            setVideoCurrentTime(leftTrimValue)
         }
-    }, [headerValue, rightTrimValue, videoRef.current])
+    }, [videoCurrentTime, rightTrimValue, videoRef.current])
 
     const onPlayHandler = () => {
         const thisVideo = videoRef.current!
 
         intervalId = setInterval(() => {
-            setHeaderValue(Math.ceil(thisVideo.currentTime * fps))
+            setVideoCurrentTime(Math.ceil(thisVideo.currentTime * fps))
         }, 40)
     }
 
