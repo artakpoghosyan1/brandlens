@@ -3,17 +3,21 @@ import { css } from 'emotion'
 import { colors } from '../constants/Colors'
 import { BackIcon } from '../assets/icons/BackIcon'
 import { clearButtonDefaultStylesCss } from '../styles/sharedStyles'
-import { DoneIcon } from '../assets/icons/DoneIcon'
 import { TrimComponent } from './Trim/TrimComponent'
 import { PageComponent } from './shared/PageComponent'
 import { PageHeaderComponent } from './shared/PageHeaderComponent'
 import { TrimVideoComponent } from './Trim/TrimVideoComponent'
 import { PageBodyComponent } from './shared/PageBodyComponent'
-import { TrimContext } from '../contexts/TrimContext'
+import { TrimThumbsComponent } from './Trim/TrimThumbsComponent'
+import { TrimDoneButtonComponent } from './Trim/TrimDoneButtonComponent'
+import { TrimContextProvider } from '../contexts/TrimContextProvider'
+import { CSSTransition } from 'react-transition-group'
+import { useSelector } from 'react-redux'
+import { IState } from '../../data/IState'
 
 const editWrapperCss = css`
     background-color: ${colors.codGray};
-    padding: 30px 18px 23px;
+    padding: 0 18px 23px;
 
     position: absolute;
     width: 100%;
@@ -31,42 +35,30 @@ const editBodyCss = css`
 `
 
 export const EditVideoComponent: React.FC = React.memo(() => {
-    const [videoCurrentTime, setVideoCurrentTime] = React.useState<number>(0)
-    const [shouldPauseTrimmingVideo, setShouldPauseTrimmingVideo] = React.useState<boolean>(false)
-    const [leftTrimValue, setLeftTrimValue] = React.useState<number>(0)
-    const [rightTrimValue, setRightTrimValue] = React.useState<number>(0)
+    const openSingleTrim = useSelector((state: IState) => state.openSingleTrim)
 
     return (
-        <TrimContext.Provider
-            value={{
-                leftTrimValue,
-                setLeftTrimValue,
-                rightTrimValue,
-                setRightTrimValue,
-                videoCurrentTime,
-                setVideoCurrentTime,
-                shouldPauseTrimmingVideo,
-                setShouldPauseTrimmingVideo,
-            }}
-        >
+        <TrimContextProvider>
             <PageComponent className={editWrapperCss}>
                 <PageHeaderComponent className={editHeaderCss}>
-                    <button className={clearButtonDefaultStylesCss}>
-                        <DoneIcon />
-                    </button>
-
-                    <button className={clearButtonDefaultStylesCss}>
+                    <button className={clearButtonDefaultStylesCss} data-testid="trim-back-button">
                         <BackIcon />
                     </button>
+
+                    <TrimDoneButtonComponent />
                 </PageHeaderComponent>
 
                 <PageBodyComponent className={editBodyCss}>
                     <TrimVideoComponent />
                 </PageBodyComponent>
                 <footer>
-                    <TrimComponent />
+                    <CSSTransition in={!openSingleTrim} timeout={200} classNames="trim" unmountOnExit>
+                        <TrimComponent />
+                    </CSSTransition>
+
+                    <TrimThumbsComponent />
                 </footer>
             </PageComponent>
-        </TrimContext.Provider>
+        </TrimContextProvider>
     )
 })

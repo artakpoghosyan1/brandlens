@@ -6,14 +6,14 @@ import { css } from 'emotion'
 import { step_2 } from '../../scenes/scene1/step2'
 import { step_1 } from '../../scenes/scene1/step1'
 import { RecordingButtonComponent } from './RecordingButtonComponent'
-import { RecordingControlsComponent } from './RecordingControlsComponent'
+import { ControlButtonsComponent } from './ControlButtonsComponent'
 import { CloseButtonComponent } from './shared/CloseButtonComponent'
 import { RecordingFooterComponent } from './RecordingFooterComponent'
 import { RecordingHeaderComponent } from './RecordingHeaderComponent'
 import { RecordingBodyComponent } from './RecordingBodyComponent'
 import { EditVideoComponent } from './EditVideoComponent'
 import { PageComponent } from './shared/PageComponent'
-import { TimerComponent } from './Trim/TimerComponent'
+import { TimerComponent } from './TimerComponent'
 
 interface IRecordingPageComponentProps {}
 
@@ -31,9 +31,6 @@ export const RecordingPageComponent: React.FC<IRecordingPageComponentProps> = Re
     const [isRecording, setIsRecording] = React.useState<boolean>(false)
     const [recordedVideoURL, setRecordedVideoURL] = React.useState<string | undefined>(undefined)
     const [retry, setRetry] = React.useState<boolean>(false)
-
-    const [videoSrc, setVideoSrc] = React.useState('')
-    const [message, setMessage] = React.useState('Click Start to transcode')
 
     React.useEffect(() => {
         const engineObj = new Engine(canvasRef.current, true, {
@@ -89,7 +86,6 @@ export const RecordingPageComponent: React.FC<IRecordingPageComponentProps> = Re
 
     return (
         <PageComponent>
-            <EditVideoComponent />
             <canvas id="renderCanvas" ref={canvasRef} className={recorderCanvasCss} />
 
             <RecordingHeaderComponent />

@@ -6,6 +6,7 @@ interface IPageHeaderComponentProps extends React.DOMAttributes<HTMLElement> {
 }
 
 const headerCss = css`
+    padding-top: 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;

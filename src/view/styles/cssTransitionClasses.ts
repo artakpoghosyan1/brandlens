@@ -45,20 +45,40 @@ export const cssTransitionClasses = `
       transition: bottom .3s;
     }
     
-    // record-wrapper
+    // footer-inner
     
-    .record-wrapper-enter {
+    .footer-inner-enter {
       opacity: 0;
     }
-    .record-wrapper-active {
+    .footer-inner-active {
       opacity: 1;
       transition: opacity .3s;
     }
-    .record-wrapper-exit {
+    .footer-inner-exit {
       opacity: 1;
     }
-    .record-wrapper-exit-active {
+    .footer-inner-exit-active {
       opacity: 0;
       transition: opacity .3s;
+    }
+    
+    // trim
+    
+    .trim-enter {
+      opacity: 0;
+      position: absolute;
+    }
+    .trim-enter-active {
+      opacity: 1;
+      position: static;
+      transition: opacity .3s;
+    }
+    .trim-exit {
+      opacity: 1;
+    }
+    .trim-exit-active {
+    position: absolute;
+      opacity: 0;
+      transition: bottom .2s;
     }
 `

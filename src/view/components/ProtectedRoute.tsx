@@ -9,16 +9,21 @@ interface IProtectedRouteProps {
 
 export const ProtectedRoute: React.FunctionComponent<IProtectedRouteProps> = React.memo((props) => {
     const { children, ...rest } = props
-    const [isMediaAccessAllowed, setIsMediaAccessAllowed] = React.useState(false)
+    const [mediaAccess, setMediaAccess] = React.useState<boolean | null>(false)
 
     React.useEffect(() => {
         ;(async function () {
             const cameraAccess = await getBrowserPermissions('camera')
             const audioAccess = await getBrowserPermissions('microphone')
 
-            setIsMediaAccessAllowed(cameraAccess.state === 'granted' && audioAccess.state === 'granted')
+            const granted = cameraAccess.state === 'granted' && audioAccess.state === 'granted'
+            setMediaAccess(granted || null)
         })()
     }, [])
 
-    return <Route {...rest}>{isMediaAccessAllowed ? children : <Redirect to={{ pathname: '/accesses' }} />}</Route>
+    return (
+        <Route {...rest}>
+            {mediaAccess ? children : mediaAccess === false ? null : <Redirect to={{ pathname: '/accesses' }} />}
+        </Route>
+    )
 })

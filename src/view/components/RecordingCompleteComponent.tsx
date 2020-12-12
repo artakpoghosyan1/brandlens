@@ -1,18 +1,18 @@
 import * as React from 'react'
 import { PageComponent } from './shared/PageComponent'
 import { PageHeaderComponent } from './shared/PageHeaderComponent'
-import { clearButtonDefaultStylesCss } from '../styles/sharedStyles'
 import { BackIcon } from '../assets/icons/BackIcon'
+import { clearButtonDefaultStylesCss } from '../styles/sharedStyles'
 import { PageBodyComponent } from './shared/PageBodyComponent'
 import { ControlButtonComponent } from './shared/ControlButtonComponent'
+import { ControlButtonsItemComponent } from './ControlButtonsItemComponent'
+import { ControlButtonsComponent } from './ControlButtonsComponent'
 import { ButtonComponent } from './shared/ButtonComponent'
-import { css } from 'emotion'
 import { NextIcon } from '../assets/icons/NextIcon'
 import video from '../assets/videos/overlayAnimation.mp4'
+import { css } from 'emotion'
 
-const completeCss = css`
-    padding-right: 5px;
-`
+interface IRecordingCompleteComponentProps {}
 
 const completeVideo = css`
     position: absolute;
@@ -23,39 +23,33 @@ const completeVideo = css`
     z-index: -1;
 `
 
-const completeButtonsCss = css`
-    float: right;
+const completeCss = css`
+    padding: 0 12px;
 `
 
-const completeBodyCss = css`
-    margin-top: 32px;
-`
-
-const completeHeaderCss = css`
-    padding-top: 29px;
-`
-
-const footerCss = css`
-    padding-bottom: 23px;
-`
-
-export const CompletePageComponent: React.FC = React.memo(() => {
+export const RecordingCompleteComponent: React.FC<IRecordingCompleteComponentProps> = React.memo(() => {
     return (
-        <PageComponent className={completeCss}>
+        <PageComponent data-testid="complete" className={completeCss}>
             <video src={video} autoPlay loop={true} className={completeVideo} />
 
-            <PageHeaderComponent className={completeHeaderCss}>
+            <PageHeaderComponent>
                 <button className={clearButtonDefaultStylesCss}>
                     <BackIcon />
                 </button>
             </PageHeaderComponent>
 
-            <PageBodyComponent className={completeBodyCss}>
-                <ControlButtonComponent className={completeButtonsCss} />
+            <PageBodyComponent>
+                <ControlButtonsComponent>
+                    <ControlButtonsItemComponent>
+                        <ControlButtonComponent>
+                            <button className={clearButtonDefaultStylesCss}>/\</button>
+                        </ControlButtonComponent>
+                    </ControlButtonsItemComponent>
+                </ControlButtonsComponent>
             </PageBodyComponent>
 
-            <footer className={footerCss}>
-                <ButtonComponent fullBleed className={completeButtonsCss}>
+            <footer>
+                <ButtonComponent>
                     Next
                     <NextIcon />
                 </ButtonComponent>

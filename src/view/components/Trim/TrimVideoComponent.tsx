@@ -3,14 +3,10 @@ import video from '../../assets/videos/test4.webm'
 import { css } from 'emotion'
 import { TrimContext } from '../../contexts/TrimContext'
 import { IState } from '../../../data/IState'
-import { currentRecordedVideoSelector } from '../../../data/selectors/currentRecordedVideoSelector'
-import { connect } from 'react-redux'
-import { IRecordedVideo } from '../../../models/IRecordedVideo'
-import { trimmedValueToSecond } from '../../../utilities/utilities'
+import { useSelector } from 'react-redux'
+import { trimmesCountToSecond } from '../../../utilities/utilities'
 
-interface ITrimVideoComponentProps {
-    currentRecordedVideo: IRecordedVideo
-}
+interface ITrimVideoComponentProps {}
 
 const videoWrapperCss = css`
     position: relative;
@@ -27,11 +23,31 @@ const videoCss = css`
 
 let intervalId: any
 
-export const TrimVideo: React.FC<ITrimVideoComponentProps> = React.memo(({ currentRecordedVideo: { framesCount, fps } }) => {
+export const TrimVideoComponent: React.FC<ITrimVideoComponentProps> = React.memo(() => {
     const videoRef: React.RefObject<HTMLVideoElement> = React.createRef()
-    const { videoCurrentTime, setVideoCurrentTime, shouldPauseTrimmingVideo, leftTrimValue, rightTrimValue } = React.useContext(
-        TrimContext
-    )
+    const {
+        videoCurrentTime,
+        setVideoCurrentTime,
+        shouldPauseTrimmingVideo,
+        leftTrimValue,
+        rightTrimValue,
+        framesCount,
+        fps,
+    } = React.useContext(TrimContext)
+
+    const recordedVideos = useSelector(({ recordedVideos }: IState) => recordedVideos)
+
+    // TODO temporary solution
+    const videos = React.useMemo(() => {
+        const videos: any[] = []
+        for (let i = 0; i < recordedVideos.length; i++) {
+            videos.push(video)
+        }
+
+        return videos
+    }, [recordedVideos])
+
+    const { framesCounts } = useSelector((state: IState) => state.currentRecordedVideo)!
 
     React.useEffect(() => {
         videoRef.current!.currentTime = videoCurrentTime / fps
@@ -41,11 +57,26 @@ export const TrimVideo: React.FC<ITrimVideoComponentProps> = React.memo(({ curre
         } else {
             videoRef.current!.play() // TODO fix
         }
+
+        // if (videos.length > 1) {
+        //     let i = 0
+        //
+        //     while (videoCurrentTime === framesCounts[i]) {
+        //         videoRef.current!.src = videos[i]
+        //         i++
+        //     }
+        //
+        //     // framesCounts.forEach(framesCount => {
+        //     //     if(thisVideo.currentTime === framesCount) {
+        //     //
+        //     //     }
+        //     // })
+        // }
     }, [shouldPauseTrimmingVideo, videoCurrentTime])
 
     React.useEffect(() => {
         if (videoCurrentTime > framesCount - Math.abs(rightTrimValue)) {
-            videoRef.current!.currentTime = trimmedValueToSecond(leftTrimValue, fps)
+            videoRef.current!.currentTime = trimmesCountToSecond(leftTrimValue, fps)
             setVideoCurrentTime(leftTrimValue)
         }
     }, [videoCurrentTime, rightTrimValue, videoRef.current])
@@ -67,7 +98,7 @@ export const TrimVideo: React.FC<ITrimVideoComponentProps> = React.memo(({ curre
             <video
                 loop
                 autoPlay
-                src={video}
+                src={videos[0]}
                 className={videoCss}
                 onPlay={onPlayHandler}
                 onPause={onPauseHandler}
@@ -76,9 +107,3 @@ export const TrimVideo: React.FC<ITrimVideoComponentProps> = React.memo(({ curre
         </div>
     )
 })
-
-const mapStateToProps = (state: IState) => ({
-    currentRecordedVideo: currentRecordedVideoSelector(state),
-})
-
-export const TrimVideoComponent = connect(mapStateToProps)(TrimVideo)

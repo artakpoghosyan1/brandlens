@@ -60,7 +60,7 @@ export const TrimSliderComponent: React.FC<ITrimSliderComponentProps> = React.me
                 onDrag={(e, ui) => onTrimHandler(e, ui, !!isLeft)}
                 onStop={onTrimStopHandler}
             >
-                <button className={isLeft ? leftDragCss : rightDragCss} />
+                <button className={`${isLeft ? leftDragCss : rightDragCss} trim-button`} />
             </Draggable>
         )
     }

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { RecordingButtonComponent } from './RecordingButtonComponent'
 import { ControlButtonComponent } from './shared/ControlButtonComponent'
-import { css } from 'emotion'
+import { css, cx } from 'emotion'
 import { EffectsComponent } from './EffectsComponent'
 import { recordingPageContainerCss } from '../styles/sharedStyles'
 import { connect } from 'react-redux'
@@ -10,6 +10,7 @@ import { setCurrentEffectAction } from '../../data/actionCreators'
 import { IEffect } from '../../models/IEffect'
 import { IState } from '../../data/IState'
 import { currentEffectSelector } from '../../data/selectors/currentEffectsSelector'
+import { RecordingDoneButtonComponent } from './RecordingDoneButtonComponent'
 
 interface IRecordingFooterComponentProps {
     setCurrentEffect: (currentEffects: IEffect[]) => void
@@ -19,10 +20,19 @@ interface IRecordingFooterComponentProps {
 const footerActionsCss = css`
     ${recordingPageContainerCss};
     position: relative;
-    height: 91px;
     align-items: center;
     display: flex;
     margin-bottom: 20px;
+`
+
+const footerColumnCss = css`
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+`
+
+const noFlexGrowCss = css`
+    flex-grow: 0;
 `
 
 export const RecordingFooter: React.FC<IRecordingFooterComponentProps> = React.memo((props) => {
@@ -71,15 +81,19 @@ export const RecordingFooter: React.FC<IRecordingFooterComponentProps> = React.m
 
     return (
         <footer>
-            <CSSTransition in={!openEffects} timeout={200} classNames="record-wrapper" unmountOnExit>
+            <CSSTransition in={!openEffects} timeout={200} classNames="footer-inner" unmountOnExit>
                 <div className={footerActionsCss}>
-                    <ControlButtonComponent
-                        large
-                        onClick={openEffectsOnClickHandler}
-                        data-testid="open-effects"
-                    ></ControlButtonComponent>
+                    <div className={footerColumnCss}>
+                        <ControlButtonComponent large onClick={openEffectsOnClickHandler} data-testid="open-effects" />
+                    </div>
 
-                    <RecordingButtonComponent />
+                    <div className={cx(footerColumnCss, noFlexGrowCss)}>
+                        <RecordingButtonComponent />
+                    </div>
+
+                    <div className={footerColumnCss}>
+                        <RecordingDoneButtonComponent />
+                    </div>
                 </div>
             </CSSTransition>
 

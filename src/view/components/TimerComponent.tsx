@@ -50,7 +50,7 @@ const timerOptions = [
     { label: '3x', id: 3 },
 ]
 
-export const TimerComponent: React.FC<ITimerComponentProps> = React.memo((props) => {
+export const TimerComponent: React.FC<ITimerComponentProps> = React.memo(() => {
     const [selectedItem, setSelectedItem] = React.useState(timerOptions[2])
 
     const onItemClickHandler = (selectedId) => {
@@ -59,7 +59,7 @@ export const TimerComponent: React.FC<ITimerComponentProps> = React.memo((props)
 
     return (
         <ul className={timerCss}>
-            {timerOptions.map((timer, index) => (
+            {timerOptions.map((timer) => (
                 <li
                     key={timer.id}
                     className={cx(timerItemCss, timer.id === selectedItem.id ? selectedCss : '')}

@@ -6,6 +6,8 @@ import { colors } from '../constants/Colors'
 interface IRecordingButtonComponentProps {}
 
 const borderCss = css`
+    border-radius: 50%;
+    position: absolute;
     width: 100%;
     height: 100%;
     background-color: #fff;
@@ -18,20 +20,13 @@ const borderCss = css`
 `
 
 const recordingButtonCss = css`
-    &,
-    & span {
-        border-radius: 50%;
-        position: absolute;
-    }
-
     ${clearButtonDefaultStylesCss};
+    border-radius: 50%;
+    position: relative;
     transition: all 0.3s ease-in-out;
     background-color: ${colors.recordingBtnColor};
     width: 70px;
     height: 70px;
-    bottom: 0;
-    left: 50%;
-    margin-left: -45px;
     box-shadow: inset 0 0 0 10px ${colors.recordingBtnDarkerColor};
 
     &:hover {

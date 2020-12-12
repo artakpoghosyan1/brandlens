@@ -8,4 +8,6 @@ export interface IState {
     userData: IUser | null
     recordedVideos: IRecordedVideo[]
     currentRecordedVideo: IRecordedVideo | null
+    openSingleTrim: boolean
+    combinedVideos: IRecordedVideo | null
 }

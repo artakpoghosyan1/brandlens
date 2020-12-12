@@ -6,7 +6,7 @@ export const getFrameUnit = (containerWidth: number, framesCount: number): numbe
 
 export const frameUnitToSecond = (frameUnit: number, fps: number): number => frameUnit * fps
 
-export const trimmedValueToSecond = (trimmedValue: number, fps: number): number => trimmedValue / fps
+export const trimmesCountToSecond = (framesCount: number, fps: number): number => framesCount / fps
 
 export const getTrimmedWidthInPx = (framesCount: number, trimmedValue: number, frameUnit: number): number => {
     return (framesCount - Math.abs(trimmedValue)) * frameUnit

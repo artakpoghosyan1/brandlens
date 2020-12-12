@@ -1,18 +1,12 @@
 import * as React from 'react'
 import { css } from 'emotion'
 import { colors } from '../../constants/Colors'
-import { IRecordedVideo } from '../../../models/IRecordedVideo'
-import { IState } from '../../../data/IState'
-import { currentRecordedVideoSelector } from '../../../data/selectors/currentRecordedVideoSelector'
-import { connect } from 'react-redux'
 import { DRAG_BTN_WIDTH, TrimSliderComponent } from './TrimSliderComponent'
 import { FrameThumbsComponent } from './FrameThumbsComponent'
 import { TrimContext } from '../../contexts/TrimContext'
 import { frameUnitToSecond, getFrameUnit, getTrimmedWidthInPx, mapRange } from '../../../utilities/utilities'
 
-interface ITrimComponentProps {
-    currentRecordedVideo: IRecordedVideo
-}
+interface ITrimComponentProps {}
 
 const trimCss = css`
     display: flex;
@@ -42,9 +36,7 @@ const trimCss = css`
     }
 `
 
-export const Trim: React.FC<ITrimComponentProps> = React.memo(({ currentRecordedVideo: { framesCount, fps } }) => {
-    const [leftDragValue, setLeftDragValue] = React.useState<number>(0)
-    const [rightDragValue, setRightDragValue] = React.useState<number>(0)
+export const TrimComponent: React.FC<ITrimComponentProps> = React.memo(() => {
     const [parentWidth, setParentWidth] = React.useState<number>(0)
     const [trimDirection, setTrimDirection] = React.useState<string | null>(null)
 
@@ -52,24 +44,26 @@ export const Trim: React.FC<ITrimComponentProps> = React.memo(({ currentRecorded
     const frameThumbsRef: React.RefObject<HTMLDivElement> = React.useRef(null)
 
     React.useEffect(() => {
-        setParentWidth(frameThumbsRef.current!.offsetWidth)
+        if (frameThumbsRef.current) {
+            setParentWidth(frameThumbsRef.current!.offsetWidth)
+        }
     }, [frameThumbsRef.current])
 
     const onTrimHandler = React.useCallback(
         (e, ui, isLeft) => {
             if (isLeft) {
                 trimContext.setLeftTrimValue((leftTrimValue) =>
-                    Math.round(leftTrimValue + mapRange(ui.deltaX, 0, parentWidth, 0, framesCount))
+                    Math.round(leftTrimValue + mapRange(ui.deltaX, 0, parentWidth, 0, trimContext.framesCount))
                 )
-                setLeftDragValue((leftTrimX) => leftTrimX + ui.deltaX)
+                trimContext.setLeftTrimDragValue((leftTrimX) => leftTrimX + ui.deltaX)
             } else {
-                setRightDragValue((rightDragValue) => rightDragValue + ui.deltaX)
+                trimContext.setRightTrimDragValue((rightTrimDragValue) => rightTrimDragValue + ui.deltaX)
                 trimContext.setRightTrimValue((rightTrimValue) =>
-                    Math.round(rightTrimValue + mapRange(ui.deltaX, 0, parentWidth, 0, framesCount))
+                    Math.round(rightTrimValue + mapRange(ui.deltaX, 0, parentWidth, 0, trimContext.framesCount))
                 )
             }
         },
-        [framesCount, parentWidth, trimContext.videoCurrentTime]
+        [trimContext.framesCount, parentWidth, trimContext.videoCurrentTime]
     )
 
     const onTrimStartHandler = React.useCallback((value, isLeftStart) => {
@@ -85,17 +79,23 @@ export const Trim: React.FC<ITrimComponentProps> = React.memo(({ currentRecorded
     React.useEffect(() => {
         if (trimDirection && trimContext.shouldPauseTrimmingVideo) {
             const trimValue =
-                trimDirection === 'left' ? trimContext.leftTrimValue : framesCount - Math.abs(trimContext.rightTrimValue)
+                trimDirection === 'left'
+                    ? trimContext.leftTrimValue
+                    : trimContext.framesCount - Math.abs(trimContext.rightTrimValue)
 
             trimContext.setVideoCurrentTime(trimValue)
         }
     }, [trimContext.shouldPauseTrimmingVideo, trimContext.leftTrimValue, trimContext.rightTrimValue, trimDirection])
 
-    const frameUnit = React.useMemo(() => getFrameUnit(parentWidth, framesCount), [parentWidth, framesCount])
+    const frameUnit = React.useMemo(() => getFrameUnit(parentWidth, trimContext.framesCount), [
+        parentWidth,
+        trimContext.framesCount,
+    ])
 
     const getTrimSliderMaxPoint = React.useCallback(
-        (trimValue) => getTrimmedWidthInPx(framesCount, trimValue, frameUnit) - frameUnitToSecond(frameUnit, fps),
-        [framesCount, frameUnit, fps]
+        (trimValue) =>
+            getTrimmedWidthInPx(trimContext.framesCount, trimValue, frameUnit) - frameUnitToSecond(frameUnit, trimContext.fps),
+        [trimContext.framesCount, frameUnit, trimContext.fps]
     )
 
     const leftSlideBounds = React.useMemo(
@@ -103,7 +103,7 @@ export const Trim: React.FC<ITrimComponentProps> = React.memo(({ currentRecorded
             left: 0,
             right: getTrimSliderMaxPoint(trimContext.rightTrimValue), // limitation for trimming to the right (1s)
         }),
-        [trimContext.rightTrimValue, framesCount, fps, parentWidth]
+        [trimContext.rightTrimValue, trimContext.framesCount, trimContext.fps, parentWidth, trimContext.leftTrimDragValue]
     )
 
     const rightSlideBounds = React.useMemo(
@@ -111,12 +111,16 @@ export const Trim: React.FC<ITrimComponentProps> = React.memo(({ currentRecorded
             left: -getTrimSliderMaxPoint(trimContext.leftTrimValue), // limitation for trimming to the left (1s)
             right: 0,
         }),
-        [trimContext.leftTrimValue, framesCount, fps, parentWidth]
+        [trimContext.leftTrimValue, trimContext.framesCount, trimContext.fps, parentWidth, trimContext.rightTrimDragValue]
     )
 
     return (
         <div className={trimCss}>
             <TrimSliderComponent
+                defaultPosition={{
+                    x: trimContext.leftTrimDragValue,
+                    y: 0,
+                }}
                 onTrimHandler={onTrimHandler}
                 onTrimStartHandler={onTrimStartHandler}
                 onTrimStopHandler={onTrimStopHandler}
@@ -125,16 +129,13 @@ export const Trim: React.FC<ITrimComponentProps> = React.memo(({ currentRecorded
                 isLeft
             />
 
-            <FrameThumbsComponent
-                parentWidth={parentWidth}
-                leftDragValue={Math.round(leftDragValue)}
-                rightDragValue={rightDragValue}
-                rightTrimValue={trimContext.rightTrimValue}
-                leftTrimValue={trimContext.leftTrimValue}
-                frameThumbsRef={frameThumbsRef}
-            />
+            <FrameThumbsComponent parentWidth={parentWidth} frameThumbsRef={frameThumbsRef} />
 
             <TrimSliderComponent
+                defaultPosition={{
+                    x: -trimContext.rightTrimDragValue,
+                    y: 0,
+                }}
                 onTrimHandler={onTrimHandler}
                 onTrimStartHandler={onTrimStartHandler}
                 onTrimStopHandler={onTrimStopHandler}
@@ -144,9 +145,3 @@ export const Trim: React.FC<ITrimComponentProps> = React.memo(({ currentRecorded
         </div>
     )
 })
-
-const mapStateToProps = (state: IState) => ({
-    currentRecordedVideo: currentRecordedVideoSelector(state),
-})
-
-export const TrimComponent = connect(mapStateToProps)(Trim)

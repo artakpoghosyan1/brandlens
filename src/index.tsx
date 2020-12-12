@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import { applyMiddleware, createStore } from 'redux'
 import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
 
 import { composeEnhancers } from './data/devTool'
 import { StartPageComponent } from './view/components/StartPageComponent'
@@ -11,9 +11,10 @@ import { AccessesPageComponent } from './view/components/AccessesPageComponent'
 import { RecordingPageComponent } from './view/components/RecordingPageComponent'
 import './view/styles/globalStyles'
 import { reducer } from './data/reducer'
-import { CompletePageComponent } from './view/components/CompletePageComponent'
 import { ShareComponent } from './view/components/ShareComponent'
 import { ProtectedRoute } from './view/components/ProtectedRoute'
+import { EditVideoComponent } from './view/components/EditVideoComponent'
+import { RecordingCompleteComponent } from './view/components/RecordingCompleteComponent'
 
 const store = createStore(reducer, composeEnhancers('brandLens')(applyMiddleware(thunk)))
 const Root = () => {
@@ -29,15 +30,15 @@ const Root = () => {
                 <ProtectedRoute path="/recording">
                     <RecordingPageComponent />
                 </ProtectedRoute>
-                <ProtectedRoute path="/complete">
-                    <CompletePageComponent />
-                </ProtectedRoute>
                 <ProtectedRoute path="/share">
                     <ShareComponent hashTags={['#hashtag', '#hashtag']} />
                 </ProtectedRoute>
-                <Route path="*">
-                    <Redirect to="/recording" />
-                </Route>
+                <ProtectedRoute path="/edit">
+                    <EditVideoComponent />
+                </ProtectedRoute>
+                <ProtectedRoute path="/complete">
+                    <RecordingCompleteComponent />
+                </ProtectedRoute>
             </Router>
         </Provider>
     )

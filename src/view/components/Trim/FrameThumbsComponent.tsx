@@ -3,23 +3,16 @@ import Slider from 'react-rangeslider'
 import { TrimContext } from '../../contexts/TrimContext'
 import styled from '@emotion/styled'
 import { css } from 'emotion'
-import { IState } from '../../../data/IState'
-import { currentRecordedVideoSelector } from '../../../data/selectors/currentRecordedVideoSelector'
-import { connect } from 'react-redux'
-import { IRecordedVideo } from '../../../models/IRecordedVideo'
 import { getFrameUnit, getTrimmedWidthInPx } from '../../../utilities/utilities'
+import { useSelector } from 'react-redux'
+import { IState } from '../../../data/IState'
 
 interface IFrameThumbsComponentProps {
-    leftDragValue: number
-    rightDragValue: number
-    currentRecordedVideo: IRecordedVideo
     frameThumbsRef: React.RefObject<HTMLDivElement>
     parentWidth: number
-    rightTrimValue: number
-    leftTrimValue: number
 }
 
-const FrameThumbsStyled = styled('div')<{ leftDragValue: number; rightDragValue: number; headerWidth }>`
+const FrameThumbsStyled = styled('div')<{ leftTrimDragValue: number; rightTrimDragValue: number; headerWidth }>`
     flex-grow: 1;
     position: relative;
     border-radius: 8px;
@@ -35,18 +28,18 @@ const FrameThumbsStyled = styled('div')<{ leftDragValue: number; rightDragValue:
     }
 
     &:before {
-        width: ${(props) => props.leftDragValue}px;
+        width: ${(props) => props.leftTrimDragValue}px;
         left: 0;
     }
 
     &:after {
-        width: ${(props) => Math.abs(props.rightDragValue)}px;
+        width: ${(props) => Math.abs(props.rightTrimDragValue)}px;
         right: 0;
     }
 
     .header-slider {
         width: ${(props) => props.headerWidth}px;
-        left: ${(props) => props.leftDragValue}px;
+        left: ${(props) => props.leftTrimDragValue}px;
     }
 `
 
@@ -91,72 +84,66 @@ const framesThumbsCss = css`
     height: 100%;
 `
 
-export const FrameThumbs: React.FC<IFrameThumbsComponentProps> = React.memo(
-    ({
-        rightTrimValue,
+export const FrameThumbsComponent: React.FC<IFrameThumbsComponentProps> = React.memo(({ parentWidth, frameThumbsRef }) => {
+    const {
+        videoCurrentTime,
+        setVideoCurrentTime,
+        leftTrimDragValue,
+        rightTrimDragValue,
         leftTrimValue,
-        leftDragValue,
-        rightDragValue,
-        parentWidth,
-        currentRecordedVideo: { framesCount, frameThumbnails },
-        frameThumbsRef,
-    }) => {
-        const { videoCurrentTime, setVideoCurrentTime, setShouldPauseTrimmingVideo } = React.useContext(TrimContext)
+        rightTrimValue,
+        framesCount,
+        setShouldPauseTrimmingVideo,
+    } = React.useContext(TrimContext)
+    const { frameThumbnails } = useSelector((state: IState) => state.currentRecordedVideo)!
 
-        const [headerWidth, setHeaderWidth] = React.useState<number>(0)
-        const frameUnit = React.useMemo(() => getFrameUnit(parentWidth, framesCount), [parentWidth, framesCount])
+    const [headerWidth, setHeaderWidth] = React.useState<number>(0)
+    const frameUnit = React.useMemo(() => getFrameUnit(parentWidth, framesCount), [parentWidth, framesCount])
 
-        const onBeforeChangeHandler = React.useCallback(() => {
-            setShouldPauseTrimmingVideo(true)
-        }, [])
+    const onBeforeChangeHandler = React.useCallback(() => {
+        setShouldPauseTrimmingVideo(true)
+    }, [])
 
-        const onAfterChangeHandler = React.useCallback(() => {
-            setShouldPauseTrimmingVideo(false)
-        }, [])
+    const onAfterChangeHandler = React.useCallback(() => {
+        setShouldPauseTrimmingVideo(false)
+    }, [])
 
-        const onHeaderChange = React.useCallback((value: number | number[] | undefined | null): void => {
-            if (!Array.isArray(value) && value) {
-                setVideoCurrentTime(value)
-            }
-        }, [])
+    const onHeaderChange = React.useCallback((value: number | number[] | undefined | null): void => {
+        if (!Array.isArray(value) && value) {
+            setVideoCurrentTime(value)
+        }
+    }, [])
 
-        React.useEffect(() => {
-            const trimmedValue: number = Math.abs(rightTrimValue) + leftTrimValue
+    React.useEffect(() => {
+        const trimmedValue: number = Math.abs(rightTrimValue) + leftTrimValue
 
-            setHeaderWidth(getTrimmedWidthInPx(framesCount, trimmedValue, frameUnit))
-        }, [framesCount, leftTrimValue, rightTrimValue, frameUnit])
+        setHeaderWidth(getTrimmedWidthInPx(framesCount, trimmedValue, frameUnit))
+    }, [framesCount, leftTrimValue, rightTrimValue, frameUnit])
 
-        return (
-            <FrameThumbsStyled
-                data-testid="frame-thumbs-wrapper"
-                leftDragValue={leftDragValue}
-                rightDragValue={rightDragValue}
-                headerWidth={headerWidth}
-                ref={frameThumbsRef}
-            >
-                <Slider
-                    className={`${headerSliderCss} header-slider`}
-                    min={leftTrimValue}
-                    max={framesCount + rightTrimValue}
-                    value={videoCurrentTime}
-                    orientation="horizontal"
-                    onChangeStart={onBeforeChangeHandler}
-                    onChange={onHeaderChange}
-                    onChangeComplete={onAfterChangeHandler}
-                />
+    return (
+        <FrameThumbsStyled
+            data-testid="frame-thumbs-wrapper"
+            leftTrimDragValue={leftTrimDragValue}
+            rightTrimDragValue={rightTrimDragValue}
+            headerWidth={headerWidth}
+            ref={frameThumbsRef}
+        >
+            <Slider
+                className={`${headerSliderCss} header-slider`}
+                min={leftTrimValue}
+                max={framesCount + rightTrimValue}
+                value={videoCurrentTime}
+                orientation="horizontal"
+                onChangeStart={onBeforeChangeHandler}
+                onChange={onHeaderChange}
+                onChangeComplete={onAfterChangeHandler}
+            />
 
-                <div className={framesThumbsCss}>
-                    {frameThumbnails.map((frame, i) => {
-                        return <FrameStyled img={frame} key={frame + i} />
-                    })}
-                </div>
-            </FrameThumbsStyled>
-        )
-    }
-)
-
-const mapStateToProps = (state: IState) => ({
-    currentRecordedVideo: currentRecordedVideoSelector(state),
+            <div className={framesThumbsCss} data-testid="frames-thumbs">
+                {frameThumbnails.map((frame, i) => {
+                    return <FrameStyled img={frame} key={frame + i} />
+                })}
+            </div>
+        </FrameThumbsStyled>
+    )
 })
-
-export const FrameThumbsComponent = connect(mapStateToProps)(FrameThumbs)
